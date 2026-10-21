@@ -1,12 +1,13 @@
 # QCVN Chatbot — hỏi đáp có trích dẫn về quy chuẩn môi trường (GraphRAG)
 
-> **Bản nộp mã nguồn cuối cùng.** Repo này chỉ gồm mã nguồn (`backend/`, `frontend/`, `infra/`), dữ liệu cấu hình và văn bản nguồn (`data/`, `sources/`), dữ liệu kiểm thử (`data/gold/`, `backend/tests/`) và tài liệu kỹ thuật tối thiểu (`docs/adr`, `docs/api`, các spec trong `docs/`). Kế hoạch, báo cáo, hồ sơ duyệt, UAT, sơ đồ và tài nguyên báo cáo không được đưa vào; các liên kết tới `PLAN.md`, `software-context.md`, `docs/plans/`, `docs/reports/`, `docs/diagrams/`, `report-resources/` trong tài liệu này trỏ về repo phát triển [hoangnttm/QCVN_Chatbot](https://github.com/hoangnttm/QCVN_Chatbot). Xuất từ commit `577d1ea` (nhánh `feature/generalization-v2`) ngày 2026-10-21.
+> **Bản nộp mã nguồn cuối cùng.** Repo này chỉ gồm mã nguồn (`backend/`, `frontend/`, `infra/`), dữ liệu cấu hình và văn bản nguồn (`data/`, `sources/`), dữ liệu kiểm thử (`data/gold/`, `backend/tests/`) và tài liệu kỹ thuật tối thiểu (`docs/adr`, `docs/api`, các spec trong `docs/`). Kế hoạch, báo cáo, hồ sơ duyệt, UAT, sơ đồ và tài nguyên báo cáo không được đưa vào; các liên kết tới `PLAN.md`, `software-context.md`, `docs/plans/`, `docs/reports/`, `docs/diagrams/`, `report-resources/` trong tài liệu này trỏ về repo phát triển [hoangnttm/QCVN_Chatbot](https://github.com/hoangnttm/QCVN_Chatbot). Xuất từ commit `a760227` (nhánh `feature/generalization-v2`) ngày 2026-10-21.
 
 Trợ lý hỏi đáp tiếng Việt, **mọi câu trả lời đều kèm căn cứ pháp lý** (Chương / Điều / Khoản / Điểm / Bảng, dòng, cột) và **từ chối trả lời khi không đủ căn cứ** (abstain). Phạm vi hiện tại: QCVN 40:2025/BTNMT (nước thải công nghiệp), QCVN 19:2024/BTNMT (khí thải công nghiệp), TT 06/2025, TT 45/2024, TT 10/2021.
 
 - Thiết kế gốc: [software-context.md](software-context.md) · Kế hoạch triển khai: [PLAN.md](PLAN.md) · Kiến trúc tổng quát đang theo: [docs/plans/2026-10-06-kien-truc-tong-quat.md](docs/plans/2026-10-06-kien-truc-tong-quat.md)
 - Quyết định kiến trúc: [docs/adr/](docs/adr/) · Báo cáo cuối môn: [docs/reports/bao-cao-cuoi-mon/](docs/reports/bao-cao-cuoi-mon/)
 - Hướng dẫn chi tiết cho máy dev Windows (PostgreSQL / Neo4j cài native): [docs/dev-setup.md](docs/dev-setup.md)
+- Repo nộp mã nguồn cuối cùng (chỉ mã nguồn + dữ liệu kiểm thử, không kèm kế hoạch / báo cáo): [hoangnttm/QCVN_Chatbot_Final](https://github.com/hoangnttm/QCVN_Chatbot_Final). Cập nhật lại bằng `python infra/submission/export.py` (danh sách loại trừ ở [infra/submission/gitignore](infra/submission/gitignore))
 
 ## Mục lục
 
