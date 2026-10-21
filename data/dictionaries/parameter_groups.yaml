@@ -1,0 +1,17 @@
+parameter_groups:
+  - { group_id: organic_load, name: "Tải lượng hữu cơ và chất rắn (BOD, COD/TOC, TSS)" }
+  - { group_id: physical, name: "Thông số vật lý (pH, nhiệt độ, độ màu)" }
+  - { group_id: nutrients, name: "Dinh dưỡng (tổng Nitơ, tổng Phốt pho, amoni)" }
+  - { group_id: microbiological, name: "Vi sinh (tổng coliform)" }
+  - { group_id: heavy_metals, name: "Kim loại nặng và hợp chất" }
+  - { group_id: inorganic_ions, name: "Anion và hợp chất vô cơ hòa tan (xianua, sunfua, florua, clorua, clo dư, sunfit)" }
+  - { group_id: oils_surfactants, name: "Dầu mỡ và chất hoạt động bề mặt" }
+  - { group_id: phenols, name: "Phenol và tổng phenol" }
+  - { group_id: pesticides_pops, name: "Hóa chất bảo vệ thực vật, PCB, dioxin/furan, AOX" }
+  - { group_id: volatile_organics, name: "Hợp chất hữu cơ dễ bay hơi / halogen hữu cơ" }
+  - { group_id: other_organics, name: "Hợp chất hữu cơ khác (formaldehyde, acrylamide, DEHP…)" }
+  - { group_id: gas_inorganic, name: "Khí vô cơ (NH3, CO, HCl, SO2, NOx, H2S, HF, Cl2…)" }
+  - { group_id: gas_organic, name: "Hơi/khí hữu cơ (VOC, benzen, toluen, xylen…)" }
+  - { group_id: particulate, name: "Thể hạt (bụi PM và kim loại trong bụi)" }
+  - { group_id: opacity, name: "Độ khói" }
+  - { group_id: pah, name: "Hydrocacbon thơm đa vòng (PAH)" }

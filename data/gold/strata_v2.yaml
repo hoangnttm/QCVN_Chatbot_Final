@@ -1,0 +1,211 @@
+# Gold set v2 — strata, quotas and coverage constraints (plan §2.2–2.3).
+# Read by backend/app/evaluation/gold_*.py (validator, candidates, split, stats).
+version: 2
+seed: 20260924
+paraphrase_max_share: 0.20
+paraphrase_max_per_stratum: 2
+trap_min: 15
+
+strata:
+  # ---------------------------------------------------------------- tier B, wastewater tables
+  - code: WW-B1-FLOWZONE
+    title: QCVN 40 Bảng 1 — dải lưu lượng × cột
+    domain: wastewater
+    quota_dev: 2
+    quota_test: 8
+    tables: [QCVN40_2025.B1]
+  - code: WW-B1-CODTOC
+    title: Chú thích COD hoặc TOC; Mục 4.3.2 nuôi trồng thủy sản dùng giá trị F≤2000
+    domain: wastewater
+    quota_dev: 1
+    quota_test: 2
+    tables: [QCVN40_2025.B1]
+    chunk_ids:
+      - "chunk:QCVN_40_2025/Section2/Section2.1/Table1/Footnote#25"
+  - code: WW-B2-PLAIN
+    title: QCVN 40 Bảng 2 — dòng thường (khoảng pH, dấu phẩy thập phân, cùng giá trị mọi cột, kim loại)
+    domain: wastewater
+    quota_dev: 2
+    quota_test: 10
+    tables: [QCVN40_2025.B2]
+  - code: WW-B2-COND
+    title: QCVN 40 Bảng 2 — T-P theo nguồn tiếp nhận/ngành, Clorua ngoại lệ
+    domain: wastewater
+    quota_dev: 1
+    quota_test: 5
+    tables: [QCVN40_2025.B2]
+  - code: WW-MGMT
+    title: QCVN 40 Mục 4.1–4.12 (quy định quản lý)
+    domain: wastewater
+    quota_dev: 1
+    quota_test: 5
+    document_ids: [QCVN_40_2025]
+    chunk_types: [clause, point, paragraph]
+  - code: WW-SECTOR
+    title: QCVN 40 Phụ lục 2 — loại hình, thông số đặc trưng/điều kiện
+    domain: wastewater
+    quota_dev: 2
+    quota_test: 6
+    tables: [QCVN40_2025.PL2]
+  # ---------------------------------------------------------------- tier B, emission tables
+  - code: EM-B1-EQUIP
+    title: QCVN 19 Bảng 1/2 — thiết bị × nhiên liệu × công suất × cột
+    domain: emission
+    quota_dev: 4
+    quota_test: 12
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: EM-O2-FOOTNOTE
+    title: O₂ tham chiếu và chú thích; dòng SO₂ biogas bất thường
+    domain: emission
+    quota_dev: 1
+    quota_test: 5
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: EM-EXCL-FALLBACK
+    title: Loại trừ và dòng "thiết bị xả thải khác"
+    domain: emission
+    quota_dev: 1
+    quota_test: 4
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: EM-TEF
+    title: Hệ số TEF dioxin/furan và PAH
+    domain: emission
+    quota_dev: 1
+    quota_test: 3
+    tables: [QCVN19_2024.PL2, QCVN19_2024.PL3]
+  # ---------------------------------------------------------------- tier B, cross-cutting
+  - code: METHOD
+    title: Phương pháp xác định / trọng tài
+    quota_dev: 2
+    quota_test: 6
+    tables: [QCVN40_2025.PL1, QCVN19_2024.PL1, TT10_2021.B25, TT10_2021.B26]
+    rule_ids: [TT10.MR.01, TT10.MR.02, TT10.MR.03, TT10.MR.04]
+  - code: DEF-SCOPE
+    title: Định nghĩa và phạm vi
+    quota_dev: 2
+    quota_test: 6
+    document_ids: [QCVN_40_2025, QCVN_19_2024, TT_10_2021]
+    chunk_types: [definition, clause, point]
+  - code: SAMPLING
+    title: Điều kiện lấy mẫu, vị trí, đo trực tiếp (TT10)
+    quota_dev: 2
+    quota_test: 6
+    document_ids: [TT_10_2021]
+    rule_ids: [TT10.MR.10, TT10.MR.11, TT10.MR.13, TT10.MR.18, TT10.MR.19, TT10.MR.20, TT10.MR.21, TT10.MR.22, TT10.MR.23, TT10.MR.24, TT10.MR.25, TT10.MR.26, TT10.MR.27, TT10.MR.28, TT10.MR.29]
+  - code: EFFECTIVITY
+    title: Hiệu lực, ngày ký, thay thế toàn phần/một phần
+    quota_dev: 2
+    quota_test: 8
+    chunk_types: [registry_fact, preamble, clause, point]
+    document_ids: [TT_06_2025, QCVN_40_2025, TT_45_2024, QCVN_19_2024, TT_10_2021]
+  - code: TRANSITION
+    title: Điều khoản chuyển tiếp và lộ trình
+    quota_dev: 1
+    quota_test: 5
+    document_ids: [TT_06_2025, TT_45_2024, TT_10_2021]
+    chunk_types: [clause, point]
+  - code: FREQ-M01
+    title: Tần suất quan trắc → chính sách M-01
+    quota_dev: 1
+    quota_test: 5
+    chunk_ids:
+      - "chunk:TT_10_2021/ChapterIV/Article16/Clause3"
+      - "chunk:TT_10_2021/ChapterIV/Article17/Clause5"
+  # ---------------------------------------------------------------- tier B, negatives
+  - code: NEG-OOS
+    title: Ngoài phạm vi (từ khóa _OOS)
+    domain: out_of_scope
+    quota_dev: 2
+    quota_test: 4
+  - code: NEG-MISSING
+    title: Không có đáp án trong corpus / thiếu dữ kiện
+    quota_dev: 1
+    quota_test: 4
+  - code: NEG-TRAP
+    title: Bẫy — tiền đề sai, injection, đạt/không đạt, quy đổi đơn vị, chuẩn bị thay thế
+    quota_dev: 2
+    quota_test: 10
+  # ---------------------------------------------------------------- tier A / C (no quotas: sized by generation / pilot)
+  - code: A-TABLES
+    title: Tầng A — tra bảng sinh theo mẫu từ nguồn
+    tier: A
+    tables: [QCVN40_2025.B1, QCVN40_2025.B2, QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: C-NATURAL
+    title: Tầng C — câu hỏi thật từ nhật ký pilot/UAT
+    tier: C
+  # ---------------------------------------------------------------- tier M (multihop_v2.yaml, plan 2026-09-29 §4.6)
+  - code: M-DZ
+    title: Tầng M — chưa phân vùng → Cột B mặc định (TT 06/TT 45 Điều 2.4) + dòng bảng
+    tier: M
+  - code: M-ZD
+    title: Tầng M — vùng mô tả bằng định nghĩa (Mục 1.3.3.x / 1.3.13.x) + dòng bảng
+    tier: M
+  - code: M-TR
+    title: Tầng M — lộ trình 01/01/2032 (Điều 3–4 TT 06/TT 45) + dòng bảng
+    tier: M
+  - code: M-RP
+    title: Tầng M — QCVN 40:2011 bị thay thế (Lời nói đầu QCVN 40:2025) + dòng bảng
+    tier: M
+  - code: M-FN_TOC
+    title: Tầng M — chú thích TOC/COD Bảng 1 QCVN 40:2025 + dòng TOC
+    tier: M
+  - code: M-FN_O2
+    title: Tầng M — chú thích ôxy tham chiếu Bảng 1/2 QCVN 19:2024 + dòng bảng
+    tier: M
+
+coverage:
+  - name: every_table
+    kind: table
+    values: [QCVN40_2025.B1, QCVN40_2025.B2, QCVN40_2025.PL1, QCVN40_2025.PL2, QCVN19_2024.B1, QCVN19_2024.B2, QCVN19_2024.PL1, QCVN19_2024.PL2, QCVN19_2024.PL3]
+    min_each: 1
+  - name: zones_per_domain
+    kind: zone
+    values: [A, B, C]
+    domains: [wastewater, emission]
+    min_each: 8
+  - name: flow_bands
+    kind: flow_band
+    values: ["F<=2000", "F>2000"]
+    min_each: 4
+  - name: o2_refs
+    kind: o2_ref
+    values: [4, 6, 7, 8, 12, 13, 15]
+    min_each: 1
+  - name: fuels
+    kind: fuel
+    values: [liquid, solid, biomass_solid, gas, biogas]
+    min_each: 1
+  - name: capacity_families
+    kind: capacity
+    values: ["20 tấn", "MW", "tấn/giờ"]
+    min_each: 1
+  - name: receiving_bodies
+    kind: receiving_body
+    values: [lake, river, sea, saline_brackish]
+    min_each: 1
+  - name: equipment_depth3
+    kind: equipment_depth3
+    min_total: 4
+  - name: inheritance
+    kind: inheritance
+    min_total: 3
+  - name: exception
+    kind: exception
+    min_total: 4
+  - name: footnote
+    kind: footnote
+    min_total: 4
+  - name: anomaly_rows
+    kind: tag
+    values: [anomaly]
+    min_each: 3
+  - name: frequency
+    kind: frequency
+    min_total: 5
+  - name: traps
+    kind: trap
+    min_total: 15
+  - name: as_of_dates
+    kind: as_of
+  - name: alias_variants
+    kind: alias_share
+    min_share: 0.30

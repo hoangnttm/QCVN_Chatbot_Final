@@ -1,0 +1,46 @@
+# Cột A/B/C — cùng chữ nhưng nghĩa khác nhau theo miền (PLAN.md §1.4).
+# scheme: văn bản định nghĩa sơ đồ cột (limit_rules.zone_scheme). Node Zone trong graph mang mã
+# zone:{scheme}:{code}, để hai quy chuẩn cùng lĩnh vực không dùng chung một "Cột A".
+zones:
+  - domain: wastewater
+    code: A
+    scheme: QCVN_40_2025
+    name: "Cột A (nước thải)"
+    definition: "Xả ra nguồn nước tiếp nhận có chức năng cấp nước cho mục đích sinh hoạt hoặc có mục đích quản lý, cải thiện chất lượng môi trường nước như Mức A Bảng 2, Bảng 3 QCVN 08:2023/BTNMT hoặc theo quy định của UBND cấp tỉnh"
+    aliases: ["cột a", "mức a", "nguồn cấp nước sinh hoạt"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 1.3.3.1"]
+  - domain: wastewater
+    code: B
+    scheme: QCVN_40_2025
+    name: "Cột B (nước thải)"
+    definition: "Xả ra nguồn nước tiếp nhận có mục đích quản lý, cải thiện chất lượng môi trường nước như Mức B Bảng 2, Bảng 3 QCVN 08:2023/BTNMT hoặc theo quy định của UBND cấp tỉnh. Áp dụng mặc định khi chưa xác định được phân vùng xả thải (TT 06/2025 Điều 2.4)"
+    aliases: ["cột b", "mức b"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 1.3.3.2", "Thông tư 06/2025/TT-BTNMT, Điều 2, Khoản 4"]
+  - domain: wastewater
+    code: C
+    scheme: QCVN_40_2025
+    name: "Cột C (nước thải)"
+    definition: "Xả ra nguồn nước tiếp nhận không thuộc trường hợp Cột A và Cột B"
+    aliases: ["cột c"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 1.3.3.3"]
+  - domain: emission
+    code: A
+    scheme: QCVN_19_2024
+    name: "Cột A (khí thải)"
+    definition: "Cơ sở có địa điểm hoạt động nằm trong vùng bảo vệ nghiêm ngặt"
+    aliases: ["cột a", "vùng bảo vệ nghiêm ngặt"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.13.1"]
+  - domain: emission
+    code: B
+    scheme: QCVN_19_2024
+    name: "Cột B (khí thải)"
+    definition: "Cơ sở có địa điểm hoạt động nằm trong vùng hạn chế phát thải. Áp dụng mặc định khi chưa xác định được phân vùng môi trường (TT 45/2024 Điều 2.4, bản dự thảo)"
+    aliases: ["cột b", "vùng hạn chế phát thải"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.13.2", "Thông tư 45/2024/TT-BTNMT, Điều 2, Khoản 4"]
+  - domain: emission
+    code: C
+    scheme: QCVN_19_2024
+    name: "Cột C (khí thải)"
+    definition: "Cơ sở có địa điểm hoạt động không thuộc vùng bảo vệ nghiêm ngặt hoặc vùng hạn chế phát thải"
+    aliases: ["cột c"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.13.3"]

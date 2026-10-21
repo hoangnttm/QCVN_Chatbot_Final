@@ -1,0 +1,89 @@
+# Kịch bản applicability v1 — dùng cho (a) test hồi quy engine, (b) sheet "12-Kịch bản" của hồ sơ kiểm chuyên gia.
+# `expect` là kỳ vọng do nhóm kỹ thuật soạn theo văn bản; chuyên gia xác nhận / sửa (PLAN.md §13 Phase 3: 20 kịch bản).
+version: 1
+scenarios:
+  - id: SC-W-01
+    domain: wastewater
+    title: "Khai thác than, xả ra sông, cột B, F = 3.000 m³/ngày, dự án mới"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, connected_to_centralized_system: false, mixed_domestic: false, sector_id: S02, receiving_body_type: river, zone: B, flow_m3_day: 3000, is_cooling_water: false, is_aquaculture: false, uses_chlorine: false, project_status: new, as_of_date: "2026-01-15" }
+    expect: { candidate: QCVN_40_2025, zone: B, transition: new_standard, has_params: [BOD5, COD, TOC, TSS, pH, Coliform, Color], not_params: [T_P, Cl] }
+  - id: SC-W-02
+    domain: wastewater
+    title: "Chưa rõ phân vùng → Cột B mặc định + còn thiếu thông tin phân vùng"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S02, receiving_body_type: river, zone: unknown, flow_m3_day: 1500, project_status: new }
+    expect: { candidate: QCVN_40_2025, zone: B, zone_defaulted: true, missing: [zone] }
+  - id: SC-W-03
+    domain: wastewater
+    title: "Nuôi trồng thủy sản, xả ra sông, F = 9.000 → Bảng 1 mức F ≤ 2000, T-P dòng 4.2"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S01, receiving_body_type: river, zone: B, flow_m3_day: 9000, is_aquaculture: true, is_cooling_water: false, project_status: new }
+    expect: { candidate: QCVN_40_2025, tp_row: QCVN40_2025.B2.r4.2, bod_regime: "F<=2000", has_params: [pH, Coliform, T_N, T_P] }
+  - id: SC-W-04
+    domain: wastewater
+    title: "Xả vào nguồn nước mặn/lợ, có dùng Clo → không áp dụng Clorua, thêm Clo dư + Chloroform"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S10, receiving_body_type: saline_brackish, zone: C, flow_m3_day: 500, uses_chlorine: true, is_cooling_water: false, is_aquaculture: false, project_status: new }
+    expect: { candidate: QCVN_40_2025, zone: C, not_params: [Cl], has_params: [Residual_chlorine, Chloroform] }
+  - id: SC-W-05
+    domain: wastewater
+    title: "Nước làm mát không dùng Clo → chỉ nhiệt độ"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S20, receiving_body_type: river, zone: B, flow_m3_day: 20000, is_cooling_water: true, uses_chlorine: false, is_aquaculture: false, project_status: new }
+    expect: { candidate: QCVN_40_2025, params_exact: [Temperature] }
+  - id: SC-W-06
+    domain: wastewater
+    title: "Nước thải chăn nuôi xử lý riêng → ngoài QCVN 40"
+    context: { wastewater_kind: livestock, discharges_to_receiving_water: true }
+    expect: { candidate_status: excluded, limits: 0 }
+  - id: SC-W-07
+    domain: wastewater
+    title: "Đấu nối khu công nghiệp → yêu cầu chủ hạ tầng (gián tiếp)"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, connected_to_centralized_system: true, sector_id: S15, receiving_body_type: river, zone: B, flow_m3_day: 800, project_status: new }
+    expect: { candidate_status: indirect }
+  - id: SC-W-08
+    domain: wastewater
+    title: "Cơ sở vận hành từ 2020, đánh giá 01/2026 → quy chuẩn cũ tới hết 2031, khuyến khích áp dụng sớm"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S02, receiving_body_type: river, zone: B, flow_m3_day: 3000, project_status: operating, dossier_date: "2020-05-01", as_of_date: "2026-01-15" }
+    expect: { transition: old_standard_until_deadline }
+  - id: SC-W-09
+    domain: wastewater
+    title: "Cùng cơ sở SC-W-08 nhưng đánh giá 03/2032 → bắt buộc QCVN 40:2025"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S02, receiving_body_type: river, zone: B, flow_m3_day: 3000, project_status: operating, dossier_date: "2020-05-01", as_of_date: "2032-03-01" }
+    expect: { transition: new_standard }
+  - id: SC-W-10
+    domain: wastewater
+    title: "Dự án mới đánh giá 05/2025 (trước ngày hiệu lực 01/9/2025)"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S02, receiving_body_type: river, zone: A, flow_m3_day: 100, project_status: new, as_of_date: "2025-05-01" }
+    expect: { transition: not_yet_effective, zone: A }
+  - id: SC-W-11
+    domain: wastewater
+    title: "Thiếu lưu lượng → không chọn được nhóm cột Bảng 1, báo thiếu"
+    context: { wastewater_kind: industrial, discharges_to_receiving_water: true, sector_id: S02, receiving_body_type: river, zone: B, project_status: new }
+    expect: { missing: [flow_m3_day], table1_limits: 0 }
+  - id: SC-E-01
+    domain: emission
+    title: "Lò hơi ≥ 20 tấn hơi/giờ đốt than, vùng hạn chế phát thải (B), dự án mới"
+    context: { has_stack_emission: true, is_vehicle: false, zone: B, equipment_type_id: thiet_bi_co_cong_suat_hoi_tu_20_tan_gio_tro_len_hoac_co_nhiet_luong_tu_12_380_00, fuel_type: solid, capacity_value: 25, capacity_unit: t_steam_per_h, project_status: new, as_of_date: "2026-01-15" }
+    expect: { candidate: QCVN_19_2024, zone: B, transition: new_standard, has_params: [CO, SO2, NOx, PM], limit_CO: 350, ref_o2_CO: 6 }
+  - id: SC-E-02
+    domain: emission
+    title: "Cùng lò hơi nhưng khai báo đốt khí → cảnh báo nhiên liệu không khớp dòng thiết bị"
+    context: { has_stack_emission: true, is_vehicle: false, zone: B, equipment_type_id: thiet_bi_co_cong_suat_hoi_tu_20_tan_gio_tro_len_hoac_co_nhiet_luong_tu_12_380_00, fuel_type: gas, project_status: new }
+    expect: { warning_contains: "không khớp dòng thiết bị" }
+  - id: SC-E-03
+    domain: emission
+    title: "Thiết bị không có trong Bảng 1/2, chưa rõ phân vùng → dòng thiết bị khác, Cột B mặc định"
+    context: { has_stack_emission: true, is_vehicle: false, zone: unknown, equipment_type_id: thiet_bi_khong_ton_tai, project_status: new }
+    expect: { zone: B, zone_defaulted: true, warning_contains: "thiết bị xả thải khác", missing: [zone] }
+  - id: SC-E-04
+    domain: emission
+    title: "Phương tiện giao thông → ngoài QCVN 19"
+    context: { has_stack_emission: true, is_vehicle: true, zone: B, equipment_type_id: thiet_bi_phat_dien_khac }
+    expect: { candidate_status: excluded, limits: 0 }
+  - id: SC-E-05
+    domain: emission
+    title: "Cơ sở vận hành từ 2019 → quy chuẩn cũ tới hết 2031 + còn thiếu lộ trình UBND tỉnh"
+    context: { has_stack_emission: true, is_vehicle: false, zone: C, equipment_type_id: thiet_bi_co_cong_suat_hoi_tu_20_tan_gio_tro_len_hoac_co_nhiet_luong_tu_12_380_00, fuel_type: solid, project_status: operating, dossier_date: "2019-01-01", as_of_date: "2026-01-15" }
+    expect: { transition: old_standard_until_deadline, missing: [local_roadmap] }
+  - id: SC-E-06
+    domain: emission
+    title: "Lò nung clanke xi măng đồng xử lý chất thải, cột A"
+    context: { has_stack_emission: true, is_vehicle: false, zone: A, equipment_type_id: lo_nung_clanke_trong_san_xuat_xi_mang_bao_gom_dong_xu_ly_chat_thai, co_processes_waste: true, project_status: new }
+    expect: { candidate: QCVN_19_2024, zone: A, has_params: [NH3] }

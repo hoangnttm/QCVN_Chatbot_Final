@@ -1,0 +1,91 @@
+document_id: TT_45_2024
+source_format: pdf
+preprocess: [pdf_extract, normalize_legacy_text]
+text_status_note: "Bản chính thức (PO xác nhận đối chiếu bản gốc 2026-09-24) nhưng file trống số hiệu/ngày; DateLine và EffectiveDate KHÔNG sinh registry_fact from_text — ngày lấy từ registry_fact admin_declared"
+# Đầu vào là output docling (data/derived/TT_45_2024/pdf_extract/extracted.md): heading có tiền tố "## ",
+# mỗi đoạn cách nhau một dòng trống, câu có thể bị ngắt qua trang (text_may_wrap), khoản/điểm có marker "1." / "a)".
+boilerplate_block: until_next_heading
+
+structure:
+  - kind: Header
+    match: '^(?:##\s*)?BỘ TÀI NGUYÊN VÀ MÔI TRƯỜNG'
+    block: line
+  - kind: DocumentNumber
+    match: '^Số:\s*(?P<number>.*)$'
+    block: line
+    note: "trống trong file → number=''; phần '/2024/TT-BTNMT' rơi xuống dòng riêng"
+  - kind: DocumentNumber
+    match: '^(?P<number>/?\d*/\d{4}/TT-BTNMT)\s*$'
+    block: line
+  - kind: DateLine
+    match: '^(?P<place>Hà Nội), ngày\s*(?P<day>\d{0,2})\s*tháng\s*(?P<month>\d{0,2})\s*năm (?P<year>\d{4})'
+    block: line
+  - kind: Title
+    match: '^##\s*THÔNG TƯ\s*$'
+    block: line
+  - kind: Subtitle
+    match: '^##\s*Ban hành (?P<title>.+)$'
+    block: line
+  - kind: Preamble
+    match: '^(?:Căn\s+cứ|Theo\s+đề\s+nghị|Bộ\s+trưởng\s+Bộ)\s'
+    block: line
+    text_may_wrap: true
+  - kind: Article
+    match: '^##\s*Điều (?P<number>\d+)\.\s*(?P<title>.*)$'
+    block: line
+    parent_kinds: [Document]
+  - kind: Article
+    match: '^Điều (?P<number>\d+)\.\s*(?P<text>.*)$'
+    block: line
+    parent_kinds: [Document]
+    text_may_wrap: true
+    note: "Điều 1 là một câu duy nhất, docling không tách thành heading"
+  - kind: Clause
+    match: '^(?P<number>\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Article]
+    text_may_wrap: true
+  - kind: Point
+    match: '^(?P<label>[a-zđ])\)\s*(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause]
+    text_may_wrap: true
+    note: "Điều 2.2 điểm a gộp 5 QCVN trong một điểm → relations_extract tách theo mã"
+  - kind: Paragraph
+    match: '^(?!##)(?P<text>\S.+)$'
+    block: line
+    parent_kinds: [Clause, Point, Article, Preamble]
+    text_may_wrap: true
+    catch_all: true
+    note: "đoạn không có marker (nếu docling bỏ sót) — vẫn phải được phủ; sẽ lên review nếu xuất hiện dưới Article"
+
+boilerplate:
+  - '^(?:##\s*)?Nơi nhận:'
+  - '^(?:##\s*)?KT\. BỘ TRƯỞNG'
+  - '^##\s*Lê Công Thành'
+
+relations_extract:
+  - kind: PROMULGATES
+    where: Article 1
+    pattern: 'QCVN \d+(?:-MT)?:\d{4}/BTNMT'
+  - kind: REPEALS
+    where: "Article 2, Clause 2"
+    pattern: 'QCVN \d+(?:-MT)?:\d{4}/BTNMT'
+    condition_text: "theo quy định về điều khoản chuyển tiếp tại Điều 3 và lộ trình áp dụng tại Điều 4"
+  - kind: REPEALS_PARTIAL
+    where: "Article 2, Clause 3"
+    pattern: '(?P<part>Bảng [\d, và Bảng]+) (?P<code>QCVN \d+(?:-MT)?:\d{4}/BTNMT)'
+  - kind: TransitionRule
+    where: "Article 3, Article 4"
+    date_pattern: 'ngày (\d{1,2}) tháng (\d{1,2}) năm (\d{4})'
+    relative_dates:
+      - text: "ngày Thông tư này có hiệu lực thi hành"
+        resolves_to: registry_fact.effective_date
+
+citation:
+  document_label: "Thông tư 45/2024/TT-BTNMT"
+  Article: "Điều {number}"
+  Clause: "Khoản {number}"
+  Point: "điểm {label}"
+  Preamble: "Căn cứ ban hành"
+  page_suffix: "tr. {pdf_page}"

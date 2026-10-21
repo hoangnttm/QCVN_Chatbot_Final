@@ -1,0 +1,147 @@
+# Phân vùng ingest cho TT 10/2021 (PLAN.md F12, D11).
+# in_scope  : parse cấu trúc + chunk + embed, gắn domain
+# structure_only : parse cấu trúc (để cây văn bản đầy đủ), KHÔNG chunk/embed, domain ngoài MVP
+document_id: TT_10_2021
+default: structure_only
+
+partitions:
+  - unit: Chapter
+    number: I
+    pdf_pages: [2, 7]
+    scope: in_scope
+    domain: both
+    note: "Phạm vi, đối tượng, nguyên tắc áp dụng phương pháp (Đ3.1), giải thích thuật ngữ"
+  - unit: Chapter
+    number: II
+    pdf_pages: [7, 11]
+    scope: structure_only
+    domain: ambient
+    note: "Quan trắc chất lượng môi trường nền — chứa tần suất 02/03 tháng/đợt KHÔNG áp dụng cho nước thải/khí thải"
+  - unit: Chapter
+    number: III
+    pdf_pages: [11, 11]
+    scope: structure_only
+    domain: pop
+  - unit: Chapter
+    number: IV
+    pdf_pages: [11, 13]
+    scope: in_scope
+    domain: both
+    articles: { 16: wastewater, 17: emission, 18: other }
+  - unit: Chapter
+    number: V
+    pdf_pages: [13, 20]
+    scope: in_scope
+    domain: both
+    note: "QA/QC, thiết bị, quản lý dữ liệu — áp dụng chung"
+  - unit: Chapter
+    number: VI
+    pdf_pages: [20, 29]
+    scope: structure_only
+    domain: ambient
+    note: "Trạm quan trắc nước mặt / không khí xung quanh tự động"
+  - unit: Chapter
+    number: VII
+    pdf_pages: [29, 44]
+    scope: in_scope
+    domain: both
+    articles: { 33: wastewater, 34: wastewater, 35: wastewater, 36: emission, 37: emission, 38: emission }
+    note: "Hệ thống quan trắc nước thải / khí thải tự động, liên tục"
+  - unit: Chapter
+    number: VIII
+    pdf_pages: [44, 49]
+    scope: in_scope
+    domain: both
+  - unit: Chapter
+    number: IX
+    pdf_pages: [49, 51]
+    scope: structure_only
+    domain: other
+  - unit: Chapter
+    number: X
+    pdf_pages: [51, 52]
+    scope: in_scope
+    domain: both
+    note: "Hiệu lực (Đ45), chuyển tiếp (Đ46) — ngày lấy từ registry_fact"
+  - unit: Appendix
+    number: "1"
+    pdf_pages: [53, 55]
+    scope: structure_only
+    domain: ambient
+  - unit: Appendix
+    number: "2"
+    pdf_pages: [56, 94]
+    scope: structure_only
+    domain: ambient
+  - unit: Appendix
+    number: "3"
+    pdf_pages: [95, 104]
+    scope: structure_only
+    domain: pop
+  - unit: Appendix
+    number: "4"
+    pdf_pages: [105, 120]
+    scope: in_scope
+    domain: both
+    sub: { "4.1": wastewater, "4.2": emission, "4.3": other }
+  - unit: Appendix
+    number: "5"
+    pdf_pages: [121, 130]
+    scope: in_scope
+    domain: emission
+  - unit: Appendix
+    number: "6"
+    pdf_pages: [131, 133]
+    scope: in_scope
+    domain: emission
+  - unit: Appendix
+    number: "7"
+    pdf_pages: [134, 135]
+    scope: structure_only
+    domain: other
+  - unit: Appendix
+    number: "8"
+    pdf_pages: [136, 136]
+    scope: structure_only
+    domain: other
+  - unit: Appendix
+    number: "9"
+    pdf_pages: [137, 141]
+    scope: in_scope
+    domain: both
+  - unit: Appendix
+    number: "10"
+    pdf_pages: [142, 143]
+    scope: in_scope
+    domain: wastewater
+  - unit: Appendix
+    number: "11"
+    pdf_pages: [144, 144]
+    scope: in_scope
+    domain: emission
+  - unit: Appendix
+    number: "12"
+    pdf_pages: [145, 146]
+    scope: in_scope
+    domain: both
+  - unit: Appendix
+    number: "13"
+    pdf_pages: [147, 149]
+    scope: in_scope
+    domain: wastewater
+  - unit: Appendix
+    number: "14"
+    pdf_pages: [150, 152]
+    scope: in_scope
+    domain: emission
+  - unit: Appendix
+    number: "15"
+    pdf_pages: [153, 157]
+    scope: structure_only
+    domain: other
+  - unit: Appendix
+    number: "16"
+    pdf_pages: [158, 192]
+    scope: structure_only
+    domain: other
+    note: "Mẫu báo cáo; trang 162–192 là các phụ lục báo cáo con"

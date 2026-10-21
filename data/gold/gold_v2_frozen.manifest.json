@@ -1,0 +1,18 @@
+{
+  "dataset_version": "2.1.0",
+  "note": "v2 files are no longer edited; v3 files are derived from them (gold migrate-v3)",
+  "files": {
+    "gold_tables_v2.jsonl": {
+      "sha256": "48bc0ed70f4bada95e9d0452692496e8096060f701885a4ee6b8767933dc478c",
+      "n_items": 393
+    },
+    "gold_qa_v2.jsonl": {
+      "sha256": "805fbfaac96d55800bdeb5845cec3f1cfb75c4cab5042cd6a880d59650f7a67b",
+      "n_items": 13
+    },
+    "gold_multihop_v2.jsonl": {
+      "sha256": "b9488648ec54aa41cec85f0875a9a3a32a2b8c6efef8896f71cc69bfa6583cfa",
+      "n_items": 114
+    }
+  }
+}

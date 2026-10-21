@@ -1,0 +1,16 @@
+domains:
+  - code: wastewater
+    name: "Nước thải công nghiệp"
+    qcvn_document_id: QCVN_40_2025
+    routing_keywords: ["nước thải", "xả thải", "nguồn nước tiếp nhận", "nguồn tiếp nhận", "m3/ngày", "lưu lượng", "coliform", "bod", "cod", "tss", "phốt pho", "nitơ", "xả ra sông", "xả ra biển", "đấu nối", "nước làm mát", "nuôi trồng thủy sản", "clorua"]
+    unit_hints: ["mg_L"]
+    aliases: ["nước thải", "nước thải công nghiệp", "xả nước thải", "nguồn nước tiếp nhận", "lưu lượng xả thải"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 1.1.1", "QCVN 40:2025/BTNMT, Mục 1.3.2"]
+  - code: emission
+    name: "Khí thải công nghiệp"
+    qcvn_document_id: QCVN_19_2024
+    routing_keywords: ["khí thải", "ống khói", "bụi", "so2", "nox", "lò hơi", "nồi hơi", "lò đốt", "lò nung", "nm3", "nhiên liệu", "ôxy tham chiếu", "oxy tham chiếu", "tấn hơi", "phát thải", "đốt than", "sinh khối", "vùng bảo vệ nghiêm ngặt", "vùng hạn chế phát thải"]
+    unit_hints: ["mg_Nm3"]
+    parameter_phase_required: true
+    aliases: ["khí thải", "khí thải công nghiệp", "ống khói", "ống thải", "xả khí thải", "thiết bị xả khí thải", "bụi", "thể khí", "thể hạt"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.1.1", "QCVN 19:2024/BTNMT, Mục 1.3.1"]

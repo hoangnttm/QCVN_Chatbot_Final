@@ -1,0 +1,56 @@
+# Chiều điều kiện áp dụng của một giá trị giới hạn (kế hoạch 2026-10-06, G2 bước 2.1).
+#
+# Mỗi điều kiện của một LimitRule thuộc đúng một chiều khai báo ở đây; chiều lạ làm ingestion dừng.
+# Thêm một chiều mới (ví dụ thời gian lấy trung bình của QCVN 05) là thêm một mục vào tệp này và
+# khai trục tương ứng trong grammar của bảng — không sửa mã.
+#
+#   value_kind   code   — giá trị là một mã trong danh mục (cột A/B/C, loại nhiên liệu)
+#                number — giá trị là một ngưỡng số kèm toán tử và đơn vị (lưu lượng, công suất)
+#                path   — vị trí trong một phân cấp (đường dẫn thiết bị 1 > 1.2 > 1.2.1)
+#                text   — mô tả nguyên văn, chưa chuẩn hóa được thành mã (nguồn tiếp nhận, ngành)
+#                flag   — có / không
+#   scoped_by    document — mã chỉ có nghĩa trong phạm vi một văn bản ("Cột A" của quy chuẩn này
+#                           không phải "Cột A" của quy chuẩn khác); bỏ trống = nghĩa chung
+#   linked_entity  node từ điển mà điều kiện trỏ tới trong đồ thị (thay cho node Condition)
+#   slot           tên slot của câu hỏi ứng với chiều này (bước hiểu câu hỏi v2); bỏ trống = cùng tên
+#   ask_order      thứ tự ưu tiên khi phải hỏi lại người dùng (nhỏ hỏi trước); dùng khi hai chiều
+#                  thu hẹp số đáp án như nhau
+condition_dimensions:
+  - name: zone
+    ask_order: 1
+    label: "Cột / mức áp dụng"
+    value_kind: code
+    scoped_by: document
+    linked_entity: Zone
+  - name: equipment_path
+    slot: equipment
+    ask_order: 3
+    label: "Loại thiết bị (đường dẫn phân cấp trong bảng)"
+    value_kind: path
+    linked_entity: EquipmentType
+  - name: flow_regime
+    slot: flow
+    ask_order: 2
+    label: "Dải lưu lượng xả thải"
+    value_kind: number
+  - name: capacity
+    ask_order: 5
+    label: "Công suất thiết bị"
+    value_kind: number
+  - name: fuel_type
+    ask_order: 4
+    label: "Loại nhiên liệu"
+    value_kind: code
+  - name: receiving_body
+    ask_order: 6
+    label: "Nguồn tiếp nhận"
+    value_kind: text
+  - name: sector_scope
+    slot: sector
+    ask_order: 7
+    label: "Phạm vi ngành / loại hình"
+    value_kind: text
+  - name: co_processing
+    ask_order: 8
+    label: "Đồng xử lý chất thải"
+    value_kind: flag

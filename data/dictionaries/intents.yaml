@@ -1,0 +1,48 @@
+# Ý định của câu hỏi (kế hoạch G3, quyết định D54). Một câu có thể mang nhiều ý định.
+#
+#   keywords         câu hỏi chứa một trong các cụm này thì mang ý định (so trên chữ thường)
+#   main_with_slot   khi câu hỏi có slot thuộc chiều này VÀ có keyword của ý định, ý định này là
+#                    ý định chính (hỏi một con số của một thông số là tra ngưỡng, dù câu còn nhắc
+#                    lộ trình, văn bản bị thay thế hay kết thúc bằng "là gì")
+#   always_main      ý định chính bất kể các ý định khác (tần suất: chính sách M-01)
+#   secondary_only   không bao giờ là ý định chính nếu còn ý định khác
+#
+# Thứ tự trong tệp là thứ tự ưu tiên khi chọn ý định chính.
+intents:
+  - code: frequency
+    name: "Tần suất quan trắc"
+    always_main: true
+    keywords: ["tần suất", "bao lâu một lần", "mấy lần", "định kỳ bao", "bao nhiêu lần"]
+  - code: effectivity
+    name: "Hiệu lực, ngày ký, thay thế"
+    keywords: ["hiệu lực", "thay thế", "bãi bỏ", "còn áp dụng", "hết hiệu lực", "ngày ban hành", "ngày ký", "có hiệu lực từ"]
+  - code: method
+    name: "Phương pháp xác định, phương pháp trọng tài"
+    keywords: ["phương pháp", "trọng tài", "tcvn", "smeww", "iso ", "xác định bằng", "phân tích bằng"]
+  - code: sampling
+    name: "Lấy mẫu, vị trí, đo tại hiện trường"
+    keywords: ["lấy mẫu", "điểm lấy mẫu", "công suất thiết kế", "đo trực tiếp", "vị trí lấy mẫu", "khí chuẩn", "sàn thao tác"]
+  - code: definition
+    name: "Định nghĩa, giải thích thuật ngữ"
+    keywords: [" là gì", "định nghĩa", "được hiểu", "khái niệm", "có nghĩa là gì", "nghĩa là gì", "ôxy tham chiếu nào", "oxy tham chiếu nào", "điều kiện chuẩn", "tính riêng", "cộng cả"]
+  - code: applicability
+    name: "Chuyển tiếp, lộ trình, áp dụng cột hay quy chuẩn nào"
+    keywords: ["áp dụng cột nào", "áp dụng quy chuẩn nào", "cơ sở đã vận hành", "đã đi vào vận hành", "đang hoạt động từ trước", "dự án mới", "chuyển tiếp", "đấu nối", "lộ trình", "phải đáp ứng", "bắt buộc đáp ứng", "chưa xác định được phân vùng", "chưa xác định phân vùng", "chưa phân vùng", "chưa có phân vùng", "không rõ cơ sở nằm ở vùng nào", "chưa biết thuộc vùng nào", "chưa biết nguồn tiếp nhận thuộc phân vùng", "kể từ ngày", "từ ngày nào"]
+  - code: threshold
+    name: "Tra giá trị giới hạn"
+    main_with_slot: parameter
+    keywords: ["giới hạn", "ngưỡng", "bao nhiêu", "tối đa", "cho phép", "mg/", "nồng độ", "giá trị", "mức nào", "khoảng nào", "không được vượt"]
+  - code: management
+    name: "Quy định quản lý, trách nhiệm, trường hợp đặc thù"
+    keywords: ["trách nhiệm", "chỉ cần quan trắc", "phải quan trắc thông số nào", "quan trắc thông số nào", "trường hợp đặc thù", "dùng bản cũ hay bản mới"]
+  - code: scope
+    name: "Phạm vi, đối tượng áp dụng"
+    keywords: ["phạm vi", "áp dụng cho", "có áp dụng", "đối tượng"]
+  - code: compliance_check
+    name: "Đề nghị kết luận đạt hay không đạt"
+    secondary_only: true
+    keywords: ["đạt quy chuẩn", "đạt hay không", "có đạt", "đạt chưa", "đạt không", "vượt quy chuẩn", "có vi phạm"]
+  - code: comparison
+    name: "So sánh hai đối tượng, hai văn bản"
+    secondary_only: true
+    keywords: ["so với", "so sánh", "giống nhau", "khác nhau", "khác gì", "mỗi văn bản"]

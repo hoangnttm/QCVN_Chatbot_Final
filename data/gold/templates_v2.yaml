@@ -1,0 +1,106 @@
+# Tier A question templates (plan §2.7). Slots are filled by backend/app/evaluation/gold_generate.py
+# from the raw table cells (rawtables.py). No LLM involved. Vietnamese phrasing rotates by seed.
+version: 1
+
+zone_phrases:
+  wastewater:
+    A: ["cột A", "Cột A", "loại A", "cột A (xả vào nguồn nước dùng cho mục đích cấp nước sinh hoạt)"]
+    B: ["cột B", "Cột B", "loại B", "cột B (mức thông thường)"]
+    C: ["cột C", "Cột C", "loại C", "cột C (nguồn nước tiếp nhận không thuộc cột A hay cột B)"]
+  emission:
+    A: ["cột A", "Cột A", "vùng bảo vệ nghiêm ngặt (cột A)", "khu vực áp dụng cột A"]
+    B: ["cột B", "Cột B", "vùng hạn chế phát thải (cột B)", "khu vực áp dụng cột B"]
+    C: ["cột C", "Cột C", "khu vực còn lại (cột C)", "vùng áp dụng cột C"]
+
+flow_samples:
+  "F<=2000": [300, 800, 1200, 1500, 1999, 2000]
+  "F>2000": [2001, 2500, 3000, 5000, 8000, 12000]
+
+flow_phrases:
+  - "lưu lượng {flow} m3/ngày"
+  - "lưu lượng xả thải {flow} m³/ngày.đêm"
+  - "xả {flow} m3 nước thải mỗi ngày"
+  - "lưu lượng {flow_dot} m³/ngày"
+
+templates:
+  flow_zone:
+    - id: fz1
+      text: "Giới hạn {param} trong nước thải công nghiệp {zone}, {flow} là bao nhiêu?"
+    - id: fz2
+      text: "Nhà máy có {flow}, xả thải theo {zone}: nồng độ {param} tối đa cho phép là bao nhiêu?"
+    - id: fz3
+      text: "Theo QCVN 40:2025, {param} của nước thải công nghiệp ({zone}, {flow}) không được vượt quá bao nhiêu?"
+    - id: fz4
+      text: "Cơ sở {flow} thì {param} phải đạt ngưỡng nào ở {zone}?"
+    - id: fz5
+      text: "{param} nước thải, {zone}, {flow} — giá trị giới hạn?"
+    - id: fz6
+      text: "Với {flow} và phân vùng xả thải {zone}, giới hạn {param} là bao nhiêu mg/L?"
+  zone:
+    - id: z1
+      text: "{param} trong nước thải công nghiệp xả ra nguồn tiếp nhận {zone} tối đa bao nhiêu?"
+    - id: z2
+      text: "Giới hạn cho phép của {param} theo QCVN 40:2025, {zone}?"
+    - id: z3
+      text: "Nước thải công nghiệp thuộc {zone} thì {param} không được vượt bao nhiêu?"
+    - id: z4
+      text: "Ngưỡng {param} đối với cơ sở xả thải theo {zone} là gì?"
+    - id: z5
+      text: "Cho tôi giá trị giới hạn {param} ({zone}) trong QCVN 40:2025."
+    - id: z6
+      text: "{param} ở {zone} của nước thải công nghiệp là bao nhiêu?"
+  zone_sub:
+    - id: zs1
+      text: "{param} đối với {row_phrase}, {zone} tối đa bao nhiêu?"
+    - id: zs2
+      text: "Giới hạn {param} cho {row_phrase} theo {zone} là bao nhiêu?"
+    - id: zs3
+      text: "{row_phrase}: ngưỡng {param} ở {zone}?"
+    - id: zs4
+      text: "Theo QCVN 40:2025, {row_phrase} phải đảm bảo {param} không quá bao nhiêu ({zone})?"
+  equipment_zone:
+    - id: ez1
+      text: "{param} của {equipment} {zone} giới hạn bao nhiêu?"
+    - id: ez2
+      text: "Nồng độ {param} tối đa cho phép trong khí thải của {equipment}, {zone}?"
+    - id: ez3
+      text: "{equipment_cap} ở {zone} được phép thải {param} tối đa bao nhiêu mg/Nm3?"
+    - id: ez4
+      text: "Theo QCVN 19:2024, {equipment} thuộc {zone} thì {param} không được vượt quá bao nhiêu{o2_suffix}?"
+    - id: ez5
+      text: "Giới hạn {param} trong khí thải của {equipment} ({zone}) là bao nhiêu{o2_suffix}?"
+    - id: ez6
+      text: "Ngưỡng {param} cho {equipment}, khu vực {zone}?"
+
+o2_suffix: [" và hàm lượng ôxy tham chiếu là bao nhiêu", " (kèm ôxy tham chiếu)", ""]
+
+row_phrases:
+  "QCVN40_2025.B2.r4.1":
+    - "cơ sở xả nước thải ra hồ"
+    - "nhà máy xả thải ra ao, đầm"
+    - "nguồn tiếp nhận là hồ, ao, đầm"
+  "QCVN40_2025.B2.r4.2":
+    - "cơ sở nuôi trồng thủy sản xả ra sông"
+    - "nhà máy chế biến thủy sản xả ra vùng nước biển"
+    - "cơ sở chế biến tinh bột sắn xả nước thải ra sông"
+    - "nhà máy chế biến cao su xả ra suối"
+  "QCVN40_2025.B2.r4.3":
+    - "nhà máy cơ khí xả nước thải ra sông"
+    - "cơ sở dệt nhuộm xả ra vùng nước biển"
+    - "cơ sở không thuộc nhóm thủy sản/tinh bột sắn/cao su xả ra sông"
+
+parameter_aliases:
+  "BOD5": ["BOD5", "BOD₅", "nhu cầu oxy sinh hóa BOD5"]
+  "COD": ["COD", "nhu cầu oxy hóa học COD"]
+  "TOC": ["TOC", "tổng cacbon hữu cơ (TOC)"]
+  "TSS": ["TSS", "tổng chất rắn lơ lửng"]
+  "T-N": ["tổng nitơ", "T-N", "tổng N"]
+  "T-P": ["tổng phốt pho", "T-P", "tổng P"]
+  "Hg": ["thủy ngân", "Hg"]
+  "CO": ["CO", "cacbon monoxit", "khí CO"]
+  "NH3": ["amoniac", "NH3", "khí amoniac"]
+  "SO2": ["SO2", "lưu huỳnh điôxit", "khí SO2"]
+  "NOx": ["NOx", "các oxit nitơ NOx"]
+  "PM": ["bụi", "bụi PM", "bụi tổng"]
+  "HCl": ["HCl", "axit clohydric"]
+  "HF": ["HF", "axit flohydric"]

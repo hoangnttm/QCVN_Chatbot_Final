@@ -1,0 +1,76 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install (core + dev only; ml/pdf extras are not needed for these checks)
+        run: uv sync --group dev
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format check
+        run: uv run ruff format --check .
+      - name: Tests (database tests skip without PostgreSQL; see eval-gate for the DB-backed gate)
+        run: uv run pytest -q
+
+  # M5 — offline retrieval regression gate on the dev split (gold v2, CI-eligible items only:
+  # the three Markdown documents; TT 45/TT 10 need docling and are excluded here).
+  eval-gate:
+    runs-on: ubuntu-latest
+    needs: backend
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: qcvn
+          POSTGRES_PASSWORD: qcvn_dev_password
+          POSTGRES_DB: qcvn
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U qcvn"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql+psycopg://qcvn:qcvn_dev_password@localhost:5432/qcvn
+      LOG_JSON: "false"
+      ALERTS_ENABLED: "false"
+      EMBEDDING_PROVIDER: gemini
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: uv sync --group dev
+      - name: Ingest the Markdown documents (structure, tables, rules, chunks)
+        run: uv run python scripts/ingest.py all --doc TT_06_2025 --doc QCVN_40_2025 --doc QCVN_19_2024
+      - name: Migrate and load into PostgreSQL
+        run: |
+          uv run alembic upgrade head
+          uv run python scripts/ingest.py load --doc TT_06_2025 --doc QCVN_40_2025 --doc QCVN_19_2024
+      - name: Gold set check (tier A + B, CI-eligible)
+        run: uv run python scripts/evaluate.py gold-check --tier all --ci-eligible
+      - name: Retrieval gate (C4-offline, dev split)
+        run: uv run python scripts/evaluate.py retrieval --config C4-offline --split dev --tier all --ci-eligible --gate --run-id ci-gate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-gate
+          path: docs/reports/eval/ci-gate
+          if-no-files-found: ignore

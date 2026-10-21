@@ -1,0 +1,168 @@
+document_id: QCVN_19_2024
+source_format: md
+line_range: [1, 676]
+preprocess: [strip_noise_lines, latex_to_text]
+
+structure:
+  - kind: Header
+    match: '^# CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM'
+    block: until_blank
+  - kind: Title
+    match: '^\*\*(?P<code>QCVN 19:2024/BTNMT)\*\*'
+    block: until_blank
+  - kind: Subtitle
+    match: '^## QUY CHUẨN KỸ THUẬT QUỐC GIA'
+    block: until_blank
+    note: "xuất hiện 2 lần: trang bìa (dòng 5–6) và trước Mục 1 (dòng 34)"
+  - kind: Preamble
+    match: '^### Lời nói đầu'
+    block: until_next_heading
+    note: "REPLACES 7 QCVN (toàn phần) + 5 bảng (một phần)"
+  - kind: Section
+    level: 1
+    match: '^### (?P<number>\d+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Document]
+  - kind: Section
+    level: 2
+    match: '^#### (?P<number>\d+\.\d+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Section]
+  - kind: Definition
+    match: '^\*\s*(?P<number>1\.3\.\d+)\.\s+\*\*(?P<term>[^*]+)\*\*\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+    priority_over: [Clause]
+  - kind: Point
+    match: '^\s*\*\s*(?P<number>\d+\.\d+\.\d+\.\d+)\.\s+(?:\*\*(?P<term>[^*]+)\*\*\s+)?(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause, Definition]
+  - kind: Point
+    match: '^\s*\*\s*(?P<number>\d+\.\d+\.\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause]
+    note: "điểm dạng bullet '* 4.2.1.' — phải đứng TRƯỚC Clause; Definition (có term in đậm) đã bắt 1.3.x ở trên"
+  - kind: Clause
+    match: '^(?P<number>\d+\.\d+\.\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+  - kind: Clause
+    match: '^(?P<number>\d+\.\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+  - kind: Table
+    match: '^\*\*Bảng (?P<number>\d+)\.\s*(?P<title>.+?)\*\*\s*$'
+    block: table
+    parent_kinds: [Section, Clause]
+  - kind: Footnote
+    match: '^\*Chú thích:?'
+    block: until_blank
+    parent_kinds: [Table, AppendixTable, Section, Appendix]
+  - kind: Appendix
+    match: '^## Phụ lục (?P<number>\d+)'
+    block: line
+    parent_kinds: [Document]
+    title_from_next_line: '^### (?P<title>.+)$'
+  - kind: AppendixSection
+    match: '^\*\*(?P<number>\d+)\.\s+(?P<title>[^*]+)\*\*'
+    block: line
+    parent_kinds: [Appendix]
+  - kind: AppendixTable
+    match: '^\| TT'
+    block: table
+    parent_kinds: [Appendix, AppendixSection]
+  - kind: Formula
+    match: '^\$\$(?P<latex>.+)\$\$'
+    block: line
+    parent_kinds: [AppendixSection]
+  - kind: FormulaVariables
+    match: '^\*Trong đó:\*'
+    block: until_blank
+    parent_kinds: [Formula]
+  - kind: Paragraph
+    match: '^(?!\||#|\*\*Bảng|\*Chú thích|---|\$\$)(?P<text>\S.+)$'
+    block: line
+    parent_kinds: [Clause, Point, Definition, Section, AppendixSection, Appendix]
+    note: "catch-all, phải đứng CUỐI danh sách"
+
+boilerplate:
+  - '^---\s*$'
+  - '^\*\*HÀ NỘI - 2024\*\*'
+
+tables:
+  QCVN19_2024.B1:
+    title_match: 'Bảng 1\.'
+    header_rows: 1
+    columns: [tt, parameter, unit, equipment, A, B, C]
+    zone_axis: [A, B, C]
+    row_span_fill: [tt, parameter, unit]        # ô trống kế thừa dòng trên (ô gộp ngầm)
+    new_block_when: tt_non_empty                # mỗi thông số = một block
+    equipment_hierarchy:
+      column: equipment
+      numbering: '^(?P<path>\d+(?:\.\d+)*)\.\s*'
+      group_header_when: all_value_cells_empty
+      strip_markup: ["**", "*"]
+    value_grammar: le_value_with_ref_o2          # "≤ 200(4)" → value=200, ref_o2=4
+    phase: gas
+    condition_extractors:
+      - { type: fuel_type, pattern: 'nhiên liệu (?P<fuel>lỏng|rắn|sinh khối dạng rắn|khí)|khí sinh học' }
+      - { type: capacity, pattern: 'công suất[^,;]*?(?P<op>từ|dưới|trên)\s*(?P<value>[\d.,]+)\s*(?P<unit>tấn/giờ|tấn hơi/giờ|MW|Kcal/giờ)' }
+      - { type: co_processing, pattern: 'đồng xử lý chất thải' }
+      - { type: exclusion, pattern: '\((?:trừ|không áp dụng) (?P<excl>[^)]+)\)' }
+      - { type: exclusion, pattern: '\((?P<excl>đối với [^)]*không áp dụng[^)]*)\)' }
+    footnote_after: true
+  QCVN19_2024.B2:
+    title_match: 'Bảng 2\.'
+    header_rows: 1
+    columns: [tt, parameter, unit, equipment, A, B, C]
+    zone_axis: [A, B, C]
+    row_span_fill: [tt, parameter, unit]
+    new_block_when: tt_non_empty
+    equipment_hierarchy:
+      column: equipment
+      numbering: '^(?P<path>\d+(?:\.\d+)*)\.\s*'
+      group_header_when: all_value_cells_empty
+      strip_markup: ["**", "*"]
+    value_grammar: le_value_with_ref_o2
+    phase: particulate
+    condition_extractors:
+      - { type: fuel_type, pattern: 'nhiên liệu (?P<fuel>lỏng|rắn|sinh khối dạng rắn|khí)|khí sinh học' }
+      - { type: capacity, pattern: '(?:công suất|Tổng công suất)[^,;]*?(?P<op>từ|dưới|trên)\s*(?P<value>[\d.,]+)\s*(?P<unit>tấn/giờ|tấn hơi/giờ|MW|Kcal/giờ)' }
+      - { type: co_processing, pattern: 'đồng xử lý chất thải' }
+      - { type: exclusion, pattern: '\((?:trừ|không áp dụng) (?P<excl>[^)]+)\)' }
+      - { type: exclusion, pattern: '\((?P<excl>đối với [^)]*không áp dụng[^)]*)\)' }
+    footnote_after: true
+  QCVN19_2024.PL1:
+    appendix: 1
+    header_rows: 2            # dòng tiêu đề + dòng đánh số cột (1)(2)(3)(4)
+    columns: [tt, parameter, field_methods, lab_methods]
+    cell_split: "<br>"
+    methods_ordered: true
+    sampling_rows: [1, 2, 3, 4, 5, 6, 7]   # thông số đo đạc hiện trường (vị trí, vận tốc, hàm ẩm, O2, nhiệt độ, áp suất) — không phải thông số ô nhiễm
+  QCVN19_2024.PL2:
+    appendix: 2
+    header_rows: 1
+    columns: [tt, congener, tef]
+    coefficient_table: { name: TEF_dioxin_furan, formula: "TEQ = sum(C_i * TEF_i)" }
+  QCVN19_2024.PL3:
+    appendix: 3
+    header_rows: 1
+    columns: [tt, pah, tef]
+    coefficient_table: { name: TEF_pah_bap, formula: "PAH(BaP) = sum(C_i * TEF_i)" }
+
+citation:
+  document_label: "QCVN 19:2024/BTNMT"
+  hierarchical_numbers: true
+  Section: "Mục {number}"
+  Clause: "Mục {number}"
+  Point: "Mục {number}"
+  Definition: "Mục {number}"
+  Table: "Bảng {number}"
+  TableRow: "TT {row_no} ({parameter_short})"
+  Equipment: "Thiết bị {equipment_path}"
+  Zone: "Cột {zone}"
+  Appendix: "Phụ lục {number}"
+  AppendixSection: "Mục {number}"
+  Preamble: "Lời nói đầu"
+  Formula: "Công thức"
+  Footnote: "Chú thích"

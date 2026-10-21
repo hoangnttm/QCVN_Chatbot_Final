@@ -1,0 +1,260 @@
+# MonitoringRequirement — bản đồ curated cho TT 10/2021 (PLAN.md §4.1 C, ontology v1).
+# Mỗi mục neo vào một node đã parse (node id + anchor = trích đoạn nguyên văn phải có trong node).
+# `text` của yêu cầu luôn lấy nguyên văn từ node khi ingest; `summary`/`conditions` là cách hiểu
+# do hệ thống đề xuất và PHẢI được chuyên gia xác nhận (review_status) trước khi dùng để trả lời.
+# Loại: method_precedence | sampling_condition | sampling_port | direct_measurement | cems | frequency_pointer
+document_id: TT_10_2021
+version: 1
+status: draft   # chờ chuyên gia xác nhận (sheet "10-Quan trắc TT10" của hồ sơ kiểm)
+
+requirements:
+  # ---------------------------------------------------------------- Chương I, Điều 3 — nguyên tắc phương pháp
+  - id: TT10.MR.01
+    type: method_precedence
+    domain: both
+    node: TT_10_2021/ChapterI/Article3/Clause1
+    anchor: "phải tuân thủ theo các phương pháp được quy định tại Thông tư này"
+    summary: "Phương pháp quan trắc phải theo Thông tư 10/2021 và các QCVN hiện hành về môi trường."
+  - id: TT10.MR.02
+    type: method_precedence
+    domain: both
+    node: TT_10_2021/ChapterI/Article3/Clause2
+    anchor: "được chấp nhận áp dụng nếu có độ chính xác tương đương hoặc cao hơn"
+    summary: "Phương pháp tiêu chuẩn quốc tế, khu vực hoặc của quốc gia khác được chấp nhận nếu độ chính xác tương đương hoặc cao hơn phương pháp quy định."
+    conditions:
+      - { type: method_equivalence, op: ">=", text: "độ chính xác tương đương hoặc cao hơn phương pháp tiêu chuẩn quy định tại Thông tư" }
+  - id: TT10.MR.03
+    type: method_precedence
+    domain: both
+    node: TT_10_2021/ChapterI/Article3/Clause3
+    anchor: "được sửa đổi, bổ sung hoặc thay thế thì áp dụng theo các phương pháp mới"
+    summary: "Phương pháp đã bị sửa đổi, bổ sung, thay thế thì áp dụng phương pháp mới."
+  - id: TT10.MR.04
+    type: method_precedence
+    domain: both
+    node: TT_10_2021/ChapterI/Article3/Clause4
+    anchor: "phải áp dụng các phương pháp tiêu chuẩn quốc gia hoặc quốc tế"
+    summary: "Thông số chưa có kỹ thuật quan trắc trong Thông tư thì dùng phương pháp tiêu chuẩn quốc gia hoặc quốc tế."
+
+  # ---------------------------------------------------------------- Chương IV, Điều 16 — nước thải
+  - id: TT10.MR.05
+    type: method_precedence
+    domain: wastewater
+    node: TT_10_2021/ChapterIV/Article16/Clause1
+    anchor: "phương pháp quan trắc nước thải quy định tại Phụ lục 4.1"
+    summary: "Thông số và phương pháp quan trắc nước thải theo Phụ lục 4.1; thông số khác theo QCVN nước thải hoặc chương trình quan trắc."
+    references: ["Phụ lục 4.1"]
+  - id: TT10.MR.06
+    type: sampling_condition
+    domain: wastewater
+    node: TT_10_2021/ChapterIV/Article16/Clause2
+    anchor: "xác định các thông số cần quan trắc và vị trí lấy mẫu quan trắc"
+    summary: "Thông số và vị trí lấy mẫu nước thải xác định theo mục tiêu quan trắc, QCVN hiện hành, loại hình, quy mô, đặc điểm nguồn thải và yêu cầu của cơ quan có thẩm quyền."
+  - id: TT10.MR.07
+    type: frequency_pointer
+    domain: wastewater
+    node: TT_10_2021/ChapterIV/Article16/Clause3
+    anchor: "Tần suất quan trắc nước thải được thực hiện theo quy định của pháp luật hiện hành"
+    summary: "Tần suất quan trắc nước thải: dẫn chiếu pháp luật hiện hành (NĐ 08/2022, NĐ 05/2025 — ngoài corpus, quyết định D10; hệ thống từ chối trả lời tần suất kèm chỉ dẫn M-01)."
+    references: ["pháp luật hiện hành về tần suất quan trắc"]
+
+  # ---------------------------------------------------------------- Chương IV, Điều 17 — khí thải
+  - id: TT10.MR.08
+    type: method_precedence
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause1
+    anchor: "phương pháp quan trắc khí thải quy định tại Phụ lục 4.2"
+    summary: "Thông số và phương pháp quan trắc khí thải theo Phụ lục 4.2; thông số khác theo QCVN khí thải hoặc chương trình quan trắc."
+    references: ["Phụ lục 4.2"]
+  - id: TT10.MR.09
+    type: sampling_condition
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause2
+    anchor: "để xác định các thông số cần quan trắc"
+    summary: "Thông số quan trắc khí thải xác định theo mục tiêu, QCVN hiện hành, loại hình, quy mô, đặc điểm nguồn thải và yêu cầu của cơ quan có thẩm quyền."
+  - id: TT10.MR.10
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause3
+    anchor: "có thể sử dụng phương pháp đo trực tiếp tại hiện trường khi đáp ứng đầy đủ các điều kiện quy định tại Phụ lục 6"
+    summary: "SO2, NOx (NO và NO2), CO, O2 được phép đo trực tiếp tại hiện trường (thay cho lấy mẫu + phân tích) khi đáp ứng đủ điều kiện Phụ lục 6."
+    parameters: [SO2, NOx, CO]
+    references: ["Phụ lục 6"]
+    conditions:
+      - { type: precondition, text: "đáp ứng đầy đủ các điều kiện quy định tại Phụ lục 6" }
+  - id: TT10.MR.11
+    type: sampling_condition
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause4
+    anchor: "đạt tối thiểu 50% công suất thiết kế"
+    summary: "Lấy mẫu khí thải khi cơ sở hoạt động ổn định và đạt tối thiểu 50 % công suất thiết kế."
+    conditions:
+      - { type: operating_state, text: "cơ sở đang hoạt động ổn định" }
+      - { type: capacity_load, op: ">=", value: 50, unit: "% công suất thiết kế", text: "đạt tối thiểu 50% công suất thiết kế" }
+  - id: TT10.MR.12
+    type: frequency_pointer
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause5
+    anchor: "Tần suất quan trắc khí thải được thực hiện theo quy định của pháp luật hiện hành"
+    summary: "Tần suất quan trắc khí thải: dẫn chiếu pháp luật hiện hành (ngoài corpus — M-01)."
+    references: ["pháp luật hiện hành về tần suất quan trắc"]
+  - id: TT10.MR.13
+    type: sampling_port
+    domain: emission
+    node: TT_10_2021/ChapterIV/Article17/Clause6
+    anchor: "Ống khói phải có điểm (cửa) lấy mẫu khí thải"
+    summary: "Ống khói phải có cửa lấy mẫu đúng đường kính/độ rộng, có nắp đậy điều chỉnh độ mở, sàn thao tác an toàn; vị trí và kích thước theo Phụ lục 5."
+    references: ["Phụ lục 5"]
+    conditions:
+      - { type: equipment_requirement, text: "có nắp đậy để điều chỉnh độ mở rộng" }
+      - { type: equipment_requirement, text: "bố trí sàn thao tác đảm bảo an toàn, thuận lợi khi lấy mẫu" }
+
+  # ---------------------------------------------------------------- Chương IV, Điều 18 — bùn thải
+  - id: TT10.MR.14
+    type: method_precedence
+    domain: other
+    node: TT_10_2021/ChapterIV/Article18/Clause1
+    anchor: "phương pháp quan trắc bùn thải từ hệ thống xử lý nước quy định tại Phụ lục 4.3"
+    summary: "Thông số và phương pháp quan trắc bùn thải từ hệ thống xử lý nước theo Phụ lục 4.3."
+    references: ["Phụ lục 4.3"]
+  - id: TT10.MR.15
+    type: sampling_condition
+    domain: other
+    node: TT_10_2021/ChapterIV/Article18/Clause2
+    anchor: "nhằm phân định bùn thải từ hệ thống xử lý nước"
+    summary: "Thông số quan trắc bùn thải xác định theo QCVN hiện hành, loại hình, quy mô, đặc điểm nguồn thải và yêu cầu cơ quan có thẩm quyền để phân định bùn thải theo quy định quản lý chất thải."
+
+  # ---------------------------------------------------------------- Chương V, Điều 22 — QA/QC hiện trường
+  - id: TT10.MR.16
+    type: sampling_condition
+    domain: both
+    node: TT_10_2021/ChapterV/Article22/Clause7
+    anchor: "Biên bản đo và lấy mẫu hiện trường được thực hiện và hoàn thành ngay sau khi kết thúc việc lấy mẫu tại hiện trường"
+    summary: "Biên bản đo/lấy mẫu hiện trường phải hoàn thành ngay sau khi lấy mẫu, theo mẫu Biểu 2, 3, 4 Phụ lục 5."
+    references: ["Phụ lục 5, Biểu 2", "Phụ lục 5, Biểu 3", "Phụ lục 5, Biểu 4"]
+  - id: TT10.MR.17
+    type: method_precedence
+    domain: both
+    node: TT_10_2021/ChapterV/Article22/Clause10
+    anchor: "Phương pháp quan trắc tại hiện trường được lựa chọn phù hợp và được quy định tại Phụ lục 2, Phụ lục 3, Phụ lục 4"
+    summary: "Phương pháp đo tại hiện trường theo Phụ lục 2, 3, 4; thông số đo hiện trường phải dùng chất chuẩn (dung dịch chuẩn, khí chuẩn) để kiểm soát chất lượng."
+    references: ["Phụ lục 4"]
+
+  # ---------------------------------------------------------------- Phụ lục 5 — vị trí, số điểm quan trắc khí thải
+  - id: TT10.MR.18
+    type: sampling_port
+    domain: emission
+    node: TT_10_2021/Appendix5/AppendixSectionI/Paragraph#631
+    anchor: "Phương pháp này không áp dụng trong các trường hợp sau"
+    summary: "Phụ lục 5 (US EPA Method 1) không áp dụng khi dòng khí chảy xoáy/rối, ống khói D < 0,3 m (dùng Method 1A), hoặc khoảng cách tới điểm thay đổi dòng < 2D xuôi dòng và < 0,5D ngược dòng; không lấy mẫu bụi/đo vận tốc tại tâm tiết diện."
+    conditions:
+      - { type: exclusion, text: "dòng khí ở chế độ chảy xoáy hay chảy rối" }
+      - { type: exclusion, op: "<", value: 0.3, unit: "m", text: "ống khói có đường kính nhỏ hơn 0,3 m → dùng US EPA Method 1A" }
+      - { type: exclusion, text: "khoảng cách từ vị trí lấy mẫu đến vị trí thay đổi dòng nhỏ hơn 2D (xuôi dòng) và nhỏ hơn 0,5D (ngược dòng)" }
+      - { type: exclusion, text: "không lấy mẫu bụi và đo vận tốc khí thải ở điểm giữa (tâm) của tiết diện ống khói" }
+  - id: TT10.MR.19
+    type: sampling_port
+    domain: emission
+    node: TT_10_2021/Appendix5/AppendixSectionIII/Clause1
+    anchor: "B ≥ 2D và A ≥ 0,5D"
+    summary: "Lỗ lấy mẫu nằm trên đoạn ống khói thẳng, thỏa B ≥ 2D và A ≥ 0,5D (lý tưởng B = 8D, A = 2D); ống chữ nhật: D = 4 × (diện tích tiết diện / chu vi)."
+    conditions:
+      - { type: geometry, op: ">=", value: 2, unit: "D", text: "B ≥ 2D (đoạn xuôi dòng từ điểm thay đổi dòng tới vị trí lấy mẫu)" }
+      - { type: geometry, op: ">=", value: 0.5, unit: "D", text: "A ≥ 0,5D (đoạn ngược dòng)" }
+      - { type: geometry_ideal, text: "trường hợp lý tưởng B = 8D và A = 2D" }
+      - { type: formula, text: "ống khói hình chữ nhật: D = 4 × (diện tích tiết diện / chu vi)" }
+  - id: TT10.MR.20
+    type: sampling_port
+    domain: emission
+    node: TT_10_2021/Appendix5/AppendixSectionIII/Clause2
+    anchor: "lỗ lấy mẫu bảo đảm đường kính từ 90 mm đến 110 mm"
+    summary: "Lỗ lấy mẫu đường kính 90–110 mm, có nắp đậy; ống tròn ≥ 2 lỗ theo 2 phương vuông góc; ống chữ nhật theo tỉ lệ dài/rộng và số điểm hút mẫu; ống lớn thêm lỗ đối xứng."
+    conditions:
+      - { type: port_diameter, op: "between", value: [90, 110], unit: "mm", text: "đường kính lỗ lấy mẫu từ 90 mm đến 110 mm" }
+      - { type: port_count, op: ">=", value: 2, text: "ống khói hình tròn: ít nhất 02 lỗ lấy mẫu theo 02 phương vuông góc" }
+      - { type: port_count, text: "ống khói hình chữ nhật: số lỗ theo tỉ lệ chiều dài/chiều rộng và số điểm hút mẫu" }
+  - id: TT10.MR.21
+    type: sampling_port
+    domain: emission
+    node: TT_10_2021/Appendix5/AppendixSectionIII/Clause3/Pointb
+    anchor: "dựa trên tỉ lệ giữa đoạn A và đường kính trong D (A/D)"
+    summary: "Số điểm hút mẫu tối thiểu xác định theo tỉ lệ A/D hoặc B/D (Hình 2 khi chỉ đo vận tốc, Hình 3 khi lấy mẫu bụi); khoảng cách điểm hút mẫu tới thành ống theo Bảng 31 (% D). Bảng 31 và ma trận ống chữ nhật chưa tách được thành dòng bảng — xem sheet Phát hiện."
+    references: ["Bảng 31", "Hình 2", "Hình 3"]
+  - id: TT10.MR.22
+    type: sampling_condition
+    domain: emission
+    node: TT_10_2021/Appendix5/AppendixSectionIII/Heading#643/Clause4
+    anchor: "Xác định chế độ chảy của dòng khí tại vị trí lấy mẫu: phải xác định trước khi đo"
+    summary: "Phải xác định chế độ chảy trước khi đo bằng ống Pitot chữ S; quay Pitot ± 90° mà áp kế vẫn hiển thị giá trị thì dòng chảy xoáy → chọn vị trí khác."
+    conditions:
+      - { type: flow_regime_check, text: "quay ống Pitot ± 90°: nếu đồng hồ chênh áp còn hiển thị giá trị → chảy xoáy, không đạt điều kiện lấy mẫu" }
+
+  # ---------------------------------------------------------------- Phụ lục 6 — đo trực tiếp SO2, NOx, CO, O2
+  - id: TT10.MR.23
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Clause1
+    anchor: "quy trình đo các thông số gồm NOx (NO và NO2), SO2, CO, O2 trong khí thải bằng thiết bị đo trực tiếp"
+    summary: "Phụ lục 6 áp dụng cho đo trực tiếp NOx (NO, NO2), SO2, CO, O2 trong khí thải."
+    parameters: [SO2, NOx, CO]
+  - id: TT10.MR.24
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#667/Paragraph#668
+    anchor: "tối thiểu phải đáp ứng các yêu cầu về đặc tính kỹ thuật theo quy định dưới Bảng 32"
+    summary: "Thiết bị đo trực tiếp phải đạt đặc tính kỹ thuật tối thiểu tại Bảng 32 (độ chính xác, độ phân giải, thời gian đáp ứng)."
+    references: ["Bảng 32"]
+  - id: TT10.MR.25
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#672/Paragraph#673
+    anchor: "với tần suất tối thiểu là 1 lần trước mỗi ngày quan trắc"
+    summary: "Kiểm định/hiệu chuẩn theo Điều 24; kiểm tra bằng khí 'không' và khí chuẩn tại hiện trường tối thiểu 1 lần trước mỗi ngày quan trắc; khí chuẩn còn hạn, độ chính xác ≥ ± 5 %, liên kết chuẩn; lưu đủ hồ sơ."
+    references: ["Điều 24"]
+    conditions:
+      - { type: check_frequency, op: ">=", value: 1, unit: "lần trước mỗi ngày quan trắc", text: "kiểm tra bằng khí 'không' và khí chuẩn tối thiểu 1 lần trước mỗi ngày quan trắc" }
+      - { type: span_gas_accuracy, op: "<=", value: 5, unit: "%", text: "khí chuẩn bảo đảm độ chính xác tối thiểu ± 5%, còn hạn, liên kết chuẩn" }
+  - id: TT10.MR.26
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#672/Clause3
+    anchor: "không ở miệng ống khói và ưu tiên chọn nơi có dòng khí chuyển động ổn định"
+    summary: "Vị trí đo khí trùng vị trí lấy mẫu bụi; nếu chỉ đo khí: không ở miệng ống khói, ưu tiên nơi dòng khí ổn định."
+    conditions:
+      - { type: position, text: "cùng vị trí lấy mẫu bụi; chỉ đo khí: không ở miệng ống khói, nơi dòng khí chuyển động ổn định" }
+  - id: TT10.MR.27
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#678/Paragraph#679
+    anchor: "không quá 10%"
+    summary: "Zero check: kết quả < độ phân giải thiết bị. Span check: SO2, NOx tại 10–50 % toàn dải đo; CO tại 30–50 % ngưỡng QCVN; chỉ đo khi sai khác ≤ 10 %, nếu không kiểm tra lặp lại."
+    parameters: [SO2, NOx, CO]
+    conditions:
+      - { type: zero_check, op: "<", text: "kết quả kiểm tra điểm không nhỏ hơn độ phân giải của thiết bị" }
+      - { type: span_point, op: "between", value: [10, 50], unit: "% toàn dải đo", text: "SO2, NOx (NO và NO2): điểm khí chuẩn trong khoảng 10–50 % toàn dải đo" }
+      - { type: span_point, op: "between", value: [30, 50], unit: "% ngưỡng tối đa cho phép của QCVN", text: "CO: điểm khí chuẩn 30–50 % ngưỡng tối đa cho phép" }
+      - { type: span_deviation, op: "<=", value: 10, unit: "%", text: "chỉ đo khi sai khác giữa kết quả đo khí chuẩn và nồng độ khí chuẩn không quá 10%" }
+  - id: TT10.MR.28
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#680/Paragraph#681
+    anchor: "ít nhất 3 phép đo (3 mẫu) trong 1 lần quan trắc"
+    summary: "Mỗi vị trí ≥ 3 phép đo/lần quan trắc, báo cáo giá trị trung bình; mỗi phép đo ≥ 15 phút; đọc và ghi ~3 phút/giá trị."
+    conditions:
+      - { type: min_measurements, op: ">=", value: 3, unit: "phép đo / vị trí / lần quan trắc", text: "ít nhất 3 phép đo (3 mẫu) trong 1 lần quan trắc, báo cáo giá trị trung bình" }
+      - { type: min_duration, op: ">=", value: 15, unit: "phút / phép đo", text: "thời gian đo tối thiểu cho 1 phép đo là 15 phút" }
+      - { type: reading_interval, op: "=", value: 3, unit: "phút / giá trị", text: "đọc và ghi giá trị liên tục khoảng 3 phút/1 giá trị" }
+  - id: TT10.MR.29
+    type: direct_measurement
+    domain: emission
+    node: TT_10_2021/Appendix6/Heading#680/Clause5
+    anchor: "CO: ppm x 1,14"
+    summary: "Kết quả đo trực tiếp phải quy về mg/Nm³ tại điều kiện tiêu chuẩn của QCVN; nếu thiết bị đo ppm và điều kiện chuẩn 25 °C, 760 mmHg: CO × 1,14; SO2 × 2,62; NO2 × 1,88; NO × 1,23. Khi QCVN quy định O2 tham chiếu phải quy đổi theo công thức Cstd (công thức là hình ảnh trong PDF, chưa trích được — xem sheet Phát hiện)."
+    parameters: [SO2, NOx, CO]
+    conditions:
+      - { type: standard_condition, text: "25 °C, 760 mmHg" }
+      - { type: conversion_factor, op: "=", value: 1.14, unit: "mg/Nm3 trên 1 ppm", text: "CO: ppm x 1,14 = mg/Nm3" }
+      - { type: conversion_factor, op: "=", value: 2.62, unit: "mg/Nm3 trên 1 ppm", text: "SO2: ppm x 2,62 = mg/Nm3" }
+      - { type: conversion_factor, op: "=", value: 1.88, unit: "mg/Nm3 trên 1 ppm", text: "NO2: ppm x 1,88 = mg/Nm3" }
+      - { type: conversion_factor, op: "=", value: 1.23, unit: "mg/Nm3 trên 1 ppm", text: "NO: ppm x 1,23 = mg/Nm3" }
+      - { type: o2_correction, text: "quy đổi về nồng độ O2 tham chiếu của QCVN tương ứng theo công thức Cstd = f(Cm, %O2(std), %O2(m)) — công thức dạng hình, chưa trích" }

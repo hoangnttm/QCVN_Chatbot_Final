@@ -1,0 +1,51 @@
+# Query routing vocabulary that is not tied to one domain (plan 2026-10-06, G1).
+# out_of_scope_keywords: a question using one of these and no keyword of a regulated domain is
+#   answered as out of scope.
+# equipment_cue_words: a threshold row whose equipment label repeats a cue word of the question
+#   is ranked as more specific.
+out_of_scope_keywords:
+- tiếng ồn
+- độ rung
+- không khí xung quanh
+- môi trường nền
+- nước dưới đất
+- chất lượng nước mặt
+- quan trắc nước mặt
+- trầm tích
+- chương trình quan trắc cấp tỉnh
+- quan trắc môi trường cấp tỉnh
+- nước biển ven bờ
+- phóng xạ
+equipment_cue_words:
+- hơi
+- phát điện
+# Bước hiểu câu hỏi v2 (kế hoạch G3):
+# equipment_label_prefixes: từ đứng đầu nhãn thiết bị mà người hỏi thường lược bỏ
+#   ("Thiết bị đốt CO" → "đốt CO").
+# negation_cues: giá trị nêu sau một cụm này là giá trị bị loại trừ, tới hết câu hoặc tới từ
+#   chuyển ý.
+# split_cues: dấu hiệu câu hỏi có nhiều vế cần tách.
+equipment_label_prefixes:
+- các thiết bị
+- thiết bị
+negation_cues:
+- không thuộc
+- không phải là
+- không phải
+- không nằm trong
+- không dùng
+- không sử dụng
+split_cues:
+- so với
+- so sánh
+- giống nhau không
+- khác nhau
+- mỗi văn bản
+- cả nước thải và khí thải
+- '; còn'
+- ', còn'
+# zone_descriptions: cách người hỏi mô tả một cột mà không gọi tên cột (chỉ bản hiểu câu hỏi v2
+#   dùng; alias của cột trong zones.yaml dùng chung với bản đang vận hành nên không thêm ở đó).
+zone_descriptions:
+- {pattern: "cấp nước sinh hoạt", domain: wastewater, code: A}
+- {pattern: "cấp nước cho mục đích sinh hoạt", domain: wastewater, code: A}

@@ -1,0 +1,67 @@
+[project]
+name = "qcvn-backend"
+version = "0.1.0"
+description = "QCVN Legal/Compliance GraphRAG — backend, ingestion, retrieval, QA"
+readme = "../README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.2",
+    "pgvector>=0.3",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "pyyaml>=6.0",
+    "neo4j>=5.25",
+    "rank-bm25>=0.2.2",
+    "pyvi>=0.1.1",
+    "anthropic",
+    "google-genai>=1.0",
+    "pypdf>=5.0",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+# Embedding + reranking (heavy: pulls torch). Needed from Phase 2.
+ml = ["sentence-transformers>=3.0", "torch>=2.4"]
+# PDF -> Markdown with table recovery. Needed for TT 45/2024 and TT 10/2021 ingestion.
+pdf = ["docling>=2.0"]
+# Expert review pack (Excel) — scripts/review_pack.py, scripts/review_import.py
+review = ["openpyxl>=3.1"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "pytest>=8",
+    "mypy>=1.11",
+    "types-PyYAML",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W"]
+
+[tool.ruff.lint.pycodestyle]
+# formatter wraps code at 100; E501 only flags what the formatter cannot wrap (comments, strings)
+max-line-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true

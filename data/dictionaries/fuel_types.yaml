@@ -1,0 +1,22 @@
+# Nhiên liệu — trục điều kiện của QCVN 19:2024 Bảng 1/2 (lò hơi, lò dầu tải nhiệt, phát điện).
+fuel_types:
+  - code: liquid
+    name: "Nhiên liệu lỏng"
+    aliases: ["nhiên liệu lỏng", "dầu fo", "dầu do", "dầu diesel", "dầu đốt"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.7", "QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.1"]
+  - code: solid
+    name: "Nhiên liệu rắn"
+    aliases: ["nhiên liệu rắn", "than", "than đá", "than cám", "đốt than"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.7", "QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.2"]
+  - code: biomass_solid
+    name: "Nhiên liệu sinh khối dạng rắn"
+    aliases: ["sinh khối", "biomass", "trấu", "mùn cưa", "viên nén gỗ", "bã mía", "củi", "dăm gỗ"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.8", "QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.3"]
+  - code: gas
+    name: "Nhiên liệu khí"
+    aliases: ["nhiên liệu khí", "khí đốt", "khí thiên nhiên", "lng", "cng", "lpg", "gas"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.7", "QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.4"]
+  - code: biogas
+    name: "Khí sinh học (biogas)"
+    aliases: ["biogas", "khí sinh học"]
+    sources: ["QCVN 19:2024/BTNMT, Mục 1.3.9", "QCVN 19:2024/BTNMT, Bảng 2, TT 1, Thiết bị 1.5"]

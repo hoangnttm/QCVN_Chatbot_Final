@@ -1,0 +1,198 @@
+# Gold set v3, round 1 — strata, quotas and coverage (docs/plans/2026-10-06-xay-lai-bo-cau-hoi.md §0).
+# Read by backend/app/evaluation/gold_*.py (validator, authoring kit, split, stats).
+#
+# `group` is the question group of the plan (B1–B6 hand-written, T1/T2 template). Hand-written
+# quotas: dev = items migrated from v2 (13, all dev) + 20 new; test = 60 new. The former test
+# split of tiers A and M is now `val` and has no quota.
+version: 3
+seed: 20261006
+paraphrase_max_share: 0.20
+paraphrase_max_per_stratum: 2
+trap_min: 6
+
+strata:
+  # ---------------------------------------------------------------- B1 — thresholds with conditions
+  - code: WW-B1-FLOWZONE
+    title: QCVN 40 Bảng 1 — dải lưu lượng × cột
+    group: B1
+    domain: wastewater
+    quota_dev: 2 # 1 migrated + 1 new
+    quota_test: 2
+    tables: [QCVN40_2025.B1]
+  - code: WW-B2-PLAIN
+    title: QCVN 40 Bảng 2 — dòng thường (khoảng pH, dấu phẩy thập phân, kim loại)
+    group: B1
+    domain: wastewater
+    quota_dev: 1 # migrated
+    quota_test: 1
+    tables: [QCVN40_2025.B2]
+  - code: WW-B2-COND
+    title: QCVN 40 Bảng 2 — giá trị theo nguồn tiếp nhận hoặc theo ngành
+    group: B1
+    domain: wastewater
+    quota_dev: 2 # 1 migrated + 1 new
+    quota_test: 3
+    tables: [QCVN40_2025.B2]
+  - code: EM-B1-EQUIP
+    title: QCVN 19 Bảng 1/2 — thiết bị × nhiên liệu × công suất × cột
+    group: B1
+    domain: emission
+    quota_dev: 4 # 2 migrated + 2 new
+    quota_test: 5
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: EM-O2-FOOTNOTE
+    title: QCVN 19 — giá trị kèm ôxy tham chiếu
+    group: B1
+    domain: emission
+    quota_dev: 0
+    quota_test: 2
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: EM-EXCL-FALLBACK
+    title: QCVN 19 — dòng "thiết bị xả thải khác"
+    group: B1
+    domain: emission
+    quota_dev: 1
+    quota_test: 2
+    tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+  # ---------------------------------------------------------------- B2 — prose
+  - code: WW-MGMT
+    title: QCVN 40 Mục 4 — quy định quản lý
+    group: B2
+    domain: wastewater
+    quota_dev: 2 # +1 D69 a (2026-10-20): G-B2-021 từ test
+    quota_test: 3
+    document_ids: [QCVN_40_2025]
+    chunk_types: [clause, point, paragraph]
+  - code: WW-SECTOR
+    title: QCVN 40 Phụ lục 2 — loại hình, thông số đặc trưng
+    group: B2
+    domain: wastewater
+    quota_dev: 0
+    quota_test: 2
+    tables: [QCVN40_2025.PL2]
+  - code: DEF-SCOPE
+    title: Định nghĩa và phạm vi áp dụng
+    group: B2
+    quota_dev: 2
+    quota_test: 4
+    document_ids: [QCVN_40_2025, QCVN_19_2024, TT_10_2021]
+    chunk_types: [definition, clause, point]
+  - code: SAMPLING
+    title: Lấy mẫu, vị trí, đo tại hiện trường (Thông tư 10/2021)
+    group: B2
+    quota_dev: 2 # 1 migrated + 1 new
+    quota_test: 3
+    document_ids: [TT_10_2021]
+    rule_ids: [TT10.MR.10, TT10.MR.11, TT10.MR.13, TT10.MR.18, TT10.MR.19, TT10.MR.20, TT10.MR.21, TT10.MR.22, TT10.MR.23, TT10.MR.24, TT10.MR.25, TT10.MR.26, TT10.MR.27, TT10.MR.28, TT10.MR.29]
+  - code: METHOD
+    title: Phương pháp xác định, phương pháp trọng tài
+    group: B2
+    quota_dev: 2 # 1 migrated + 1 new
+    quota_test: 3
+    tables: [QCVN40_2025.PL1, QCVN19_2024.PL1, TT10_2021.B25, TT10_2021.B26]
+    rule_ids: [TT10.MR.01, TT10.MR.02, TT10.MR.03, TT10.MR.04]
+  # ---------------------------------------------------------------- B3 — effectivity and transition
+  - code: EFFECTIVITY
+    title: Hiệu lực, ngày ký, thay thế toàn phần hoặc một phần
+    group: B3
+    quota_dev: 3 # 2 migrated + 1 new
+    quota_test: 4
+    chunk_types: [registry_fact, preamble, clause, point]
+    document_ids: [TT_06_2025, QCVN_40_2025, TT_45_2024, QCVN_19_2024, TT_10_2021]
+  - code: TRANSITION
+    title: Điều khoản chuyển tiếp và lộ trình
+    group: B3
+    quota_dev: 5 # 1 migrated + 1 new; +3 D69 a (2026-10-20): G-B3-011..013 từ test
+    quota_test: 6 # 4 + 2 (PO 2026-10-20: G-B3-014, G-B3-015 chuyển từ B4 vì không phải liên văn bản)
+    document_ids: [TT_06_2025, TT_45_2024, TT_10_2021]
+    chunk_types: [clause, point]
+  # ---------------------------------------------------------------- B4 — cross-document
+  - code: XDOC
+    title: Liên văn bản, liên lĩnh vực (cần căn cứ từ hai văn bản)
+    group: B4
+    quota_dev: 2
+    quota_test: 4 # 6 - 2 (PO 2026-10-20: hai câu chuyển sang B3)
+  # ---------------------------------------------------------------- B5 — missing facts
+  - code: CLARIFY
+    title: Thiếu dữ kiện — liệt kê khi tối đa 3 phương án, hỏi lại khi nhiều hơn
+    group: B5
+    quota_dev: 2
+    quota_test: 6
+  # ---------------------------------------------------------------- B6 — refusals and traps
+  - code: NEG-OOS
+    title: Ngoài phạm vi
+    group: B6
+    domain: out_of_scope
+    quota_dev: 4 # 2 migrated + 1 new; +1 D69 a (2026-10-20): G-B6-016 từ test
+    quota_test: 2
+  - code: FREQ-M01
+    title: Tần suất quan trắc — không có trong corpus, chỉ dẫn sang văn bản khác
+    group: B6
+    quota_dev: 1 # migrated
+    quota_test: 2
+    chunk_ids:
+      - "chunk:TT_10_2021/ChapterIV/Article16/Clause3"
+      - "chunk:TT_10_2021/ChapterIV/Article17/Clause5"
+  - code: NEG-MISSING
+    title: Không có đáp án trong corpus
+    group: B6
+    quota_dev: 1
+    quota_test: 2
+  - code: NEG-TRAP
+    title: Bẫy — tiền đề sai, injection, hỏi đạt hay không đạt, quy đổi đơn vị, quy chuẩn đã bị thay thế
+    group: B6
+    quota_dev: 4 # +2 D69 a (2026-10-20): G-B6-015, G-B6-017 từ test
+    quota_test: 4
+  # ---------------------------------------------------------------- template tiers (sized by generation)
+  - code: A-TABLES
+    title: Tầng A — tra bảng sinh theo mẫu từ nguồn
+    tier: A
+    group: T1
+    tables: [QCVN40_2025.B1, QCVN40_2025.B2, QCVN19_2024.B1, QCVN19_2024.B2]
+  - code: C-NATURAL
+    title: Tầng C — câu hỏi thật từ nhật ký pilot/UAT
+    tier: C
+    group: C
+  - code: M-DZ
+    title: Tầng M — chưa phân vùng → Cột B mặc định + dòng bảng
+    tier: M
+    group: T2
+  - code: M-ZD
+    title: Tầng M — vùng mô tả bằng định nghĩa + dòng bảng
+    tier: M
+    group: T2
+  - code: M-TR
+    title: Tầng M — lộ trình 01/01/2032 + dòng bảng
+    tier: M
+    group: T2
+  - code: M-RP
+    title: Tầng M — QCVN 40:2011 bị thay thế + dòng bảng
+    tier: M
+    group: T2
+  - code: M-FN_TOC
+    title: Tầng M — chú thích TOC/COD + dòng TOC
+    tier: M
+    group: T2
+  - code: M-FN_O2
+    title: Tầng M — chú thích ôxy tham chiếu + dòng bảng
+    tier: M
+    group: T2
+
+# Round 1 keeps only the coverage the 80 hand-written items can meet; the full list of
+# strata_v2.yaml returns in round 2.
+coverage:
+  - name: zones_per_domain
+    kind: zone
+    values: [A, B, C]
+    domains: [wastewater, emission]
+    min_each: 2
+  - name: flow_bands
+    kind: flow_band
+    values: ["F<=2000", "F>2000"]
+    min_each: 1
+  - name: frequency
+    kind: frequency
+    min_total: 3
+  - name: traps
+    kind: trap
+    min_total: 6

@@ -1,0 +1,150 @@
+document_id: TT_10_2021
+source_format: pdf
+preprocess: [pdf_extract, normalize_legacy_text, strip_lone_bullets]
+scope_file: grammars/tt_10_2021.scope.yaml
+monitoring_file: grammars/tt_10_2021.monitoring.yaml   # MonitoringRequirement curated map (Đ3, Đ16–18, PL5, PL6)
+text_status_note: "Bản chính thức (PO xác nhận đối chiếu bản gốc 2026-09-24) nhưng file trống DocumentNumber/DateLine/Điều 45.1; ngày lấy từ registry_fact admin_declared"
+# Đầu vào là output docling: heading có tiền tố "## ", tiêu đề Điều/Chương có thể tách sang các dòng "## " kế tiếp
+# (title_continuation), đôi khi docling đặt "## Điều 1." TRƯỚC "## Chương I" (postprocess), khoản có thể thành
+# "## 2. …", bảng = dòng "Bảng N. tiêu đề" + grid Markdown, ký tự ƣ được normalize_legacy_text sửa.
+boilerplate_block: until_next_heading
+postprocess: [reorder_article_before_chapter]
+page_numbering:
+  body: { pdf_pages: [1, 52], printed_offset: 0 }
+  appendix: { pdf_pages: [53, 192], printed_offset: 52, label_prefix: "PL-" }   # trang PDF 53 = trang in 1
+
+structure:
+  - kind: Title
+    match: '^##\s*THÔNG TƯ\s*$'
+    block: line
+  - kind: Subtitle
+    match: '^##\s*Quy định kỹ thuật quan trắc'
+    block: line
+    text_may_wrap: true
+  - kind: Header
+    match: '^(?:##\s*)?BỘ (?:TRƯỞNG BỘ )?TÀI NGUYÊN'
+    block: line
+    note: "trang bìa: 'BỘ TÀI NGUYÊN VÀ MÔI TRƯỜNG' (không ##) và '## BỘ TRƯỞNG BỘ TÀI NGUYÊN VÀ MÔI TRƯỜNG'"
+  - kind: Preamble
+    match: '^(?:Căn\s+cứ|Theo\s+đề\s+nghị|Bộ\s+trưởng\s+Bộ)\s'
+    block: line
+    text_may_wrap: true
+    only_at_top: true
+    note: "'Căn cứ vào mục tiêu quan trắc…' trong thân văn bản là đoạn thường, không phải preamble"
+  - kind: Chapter
+    match: '^##\s*Chương\s+(?P<number>[IVX]+)\s*(?P<title>.*)$'
+    block: line
+    parent_kinds: [Document]
+    title_continuation: '^##\s*(?P<title>.+)$'
+    title_continuation_upper: true
+    note: "tiêu đề chương in hoa, có thể trải 1–2 dòng '## ' sau; dòng '## Phạm vi điều chỉnh' (chữ thường) là tiêu đề Điều 1 bị docling đảo → postprocess"
+  - kind: Appendix
+    level: 2
+    match: '^##\s*Phụ lục\s+(?P<number>\d+\.\d+)\.?\s*(?P<title>.*)$'
+    block: line
+    parent_kinds: [Appendix]
+    title_continuation: '^##\s*(?P<title>.+)$'
+  - kind: Appendix
+    level: 1
+    match: '^##\s*Phụ lục\s+(?P<number>\d+)\s*(?P<title>.*)$'
+    block: line
+    parent_kinds: [Document]
+    title_continuation: '^##\s*(?P<title>.+)$'
+    title_continuation_upper: true
+  - kind: Article
+    match: '^(?:##\s*)?Điều\s+(?P<number>\d+)\.\s*(?P<title>.*)$'
+    block: line
+    parent_kinds: [Chapter, Document]
+    title_continuation: '^##\s*(?P<title>.+)$'
+    note: "'## Điều 10.' rồi '## Quan trắc chất lượng nước biển' → nối tiêu đề"
+  - kind: Table
+    match: '^Bảng\s+(?P<number>\d+)\.\s*(?P<title>.+)$'
+    block: table
+    parent_kinds: [Point, Clause, Article, AppendixSection, Appendix, Chapter]
+    numbering: continuous_across_appendices
+  - kind: AppendixSection
+    match: '^##\s*(?P<number>[IVX]+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Appendix]
+  - kind: AppendixSection
+    match: '^(?P<number>[IVX]+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Appendix]
+  - kind: Clause
+    match: '^(?:##\s*)?(?P<number>\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Article, AppendixSection, Heading, Appendix]
+    text_may_wrap: true
+    note: "phải đứng TRƯỚC Heading vì docling có thể in khoản thành '## 2. …'"
+  - kind: Heading
+    match: '^##\s*(?P<title>.+)$'
+    block: line
+    parent_kinds: [AppendixSection, Appendix, Article, Chapter, Document]
+    note: "heading không đánh số (ví dụ 'Các từ viết tắt trong Phụ lục:')"
+  - kind: Point
+    match: '^(?P<label>[a-zđ])\)\s*(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause, Article, AppendixSection, Appendix]
+    text_may_wrap: true
+  - kind: Formula
+    match: '^(?P<lhs>[A-Za-z_]+(?:TB)?)\s*=\s*(?P<rhs>.+)$'
+    block: line
+    parent_kinds: [Point, Clause, AppendixSection, Appendix]
+  - kind: Paragraph
+    match: '^(?P<text>\S.+)$'
+    block: line
+    parent_kinds: [Point, Clause, Article, Heading, AppendixSection, Appendix, Chapter, Document]
+    text_may_wrap: true
+    catch_all: true
+
+boilerplate:
+  - '^(?:##\s*)?Nơi nhận:'
+  - '^(?:##\s*)?KT\. BỘ TRƯỞNG'
+  - '^##\s*Võ Tuấn Nhân'
+
+relations_extract:
+  - kind: REPLACES
+    where: "Article 45, Clause 3"
+    pattern: 'Thông tư số (?P<code>\d+/\d{4}/TT-BTNMT)'
+  - kind: SUPPLEMENTS
+    where: "Article 16, Clause 1; Article 17, Clause 1"
+    target: "QCVN tương ứng (QCVN_40_2025, QCVN_19_2024)"
+  - kind: MonitoringRequirement
+    where: "Article 17, Clause 4"
+    type: sampling_condition
+  - kind: MonitoringRequirement
+    where: "Article 17, Clause 6; Appendix 5"
+    type: sampling_port
+  - kind: MonitoringRequirement
+    where: "Article 17, Clause 3; Appendix 6"
+    type: direct_measurement
+  - kind: MonitoringRequirement
+    where: "Article 16, Clause 3; Article 17, Clause 5"
+    type: frequency_pointer
+    note: "→ rule M-01: tần suất theo pháp luật hiện hành (ngoài corpus)"
+
+tables:
+  # Mọi bảng "Bảng N." của TT10: cột lấy tự động từ dòng header (columns: auto); cột có chữ
+  # "phương pháp" được tách thành danh sách phương pháp theo ';' (thứ tự có ý nghĩa — Đ3.1 QCVN).
+  TT10_2021.generic:
+    title_match: '^Bảng\s+\d+\.'
+    code_pattern: "TT10_2021.B{number}"     # mã bảng theo số bảng (đánh số liên tục toàn văn bản)
+    header_rows: auto                       # docling giữ header 1–2 dòng (header gộp)
+    columns: auto
+    continuation: true                      # bảng tiếp trang: tiêu đề "Bảng N." lặp lại, không có header → gộp vào bảng trước
+    cell_split: ";"
+    methods_column_match: 'phương pháp'
+    methods_ordered: true
+
+citation:
+  document_label: "Thông tư 10/2021/TT-BTNMT"
+  Chapter: "Chương {number}"
+  Article: "Điều {number}"
+  Preamble: "Căn cứ ban hành"
+  Clause: "Khoản {number}"
+  Point: "điểm {label}"
+  Appendix: "Phụ lục {number}"
+  AppendixSection: "Mục {number}"
+  Table: "Bảng {number}"
+  TableRow: "TT {row_no}"
+  page_suffix: "tr. {printed_page}"

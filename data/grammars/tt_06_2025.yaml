@@ -1,0 +1,58 @@
+document_id: TT_06_2025
+source_format: md
+line_range: [1, 71]
+preprocess: [strip_noise_lines]
+
+structure:
+  - kind: Header
+    match: '^\*\*BỘ TÀI NGUYÊN VÀ MÔI TRƯỜNG\*\*'
+    block: until_blank
+  - kind: DocumentNumber
+    match: '^Số:\s*(?P<number>\S+)'
+    block: line
+  - kind: DateLine
+    match: '^\*(?P<place>[^,]+), ngày (?P<day>\d{1,2}) tháng (?P<month>\d{1,2}) năm (?P<year>\d{4})\*'
+    block: line
+  - kind: Title
+    match: '^# THÔNG TƯ'
+    block: until_blank
+  - kind: Preamble
+    match: '^Căn cứ '
+    block: until_blank
+    note: "Các dòng 'Căn cứ …' và 'Theo đề nghị …' → REFERENCES tới Luật/Nghị định (stub)"
+  - kind: Article
+    match: '^\*\*Điều (?P<number>\d+)\.?\s*(?P<title>[^*]*?)\s*\*\*\s*(?P<text>.*)$'
+    block: line
+    parent_kinds: [Document]
+  - kind: Clause
+    match: '^(?P<number>\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Article]
+  - kind: Point
+    match: '^\s*\*\s*(?P<label>[a-zđ])\)\s*(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause]
+
+boilerplate:
+  - '^\*\*Nơi nhận:\*\*'
+  - '^\*\*KT\. BỘ TRƯỞNG\*\*'
+  - '^---\s*$'
+
+relations_extract:
+  - kind: PROMULGATES
+    where: Article 1
+    pattern: 'QCVN \d+(?:-MT)?:\d{4}/BTNMT'
+  - kind: REPEALS
+    where: "Article 2, Clause 2 and Clause 3"
+    pattern: '(?:Thông tư số \d+/\d{4}/TT-BTNMT|QCVN \d+(?:-MT)?:\d{4}/BTNMT)'
+    condition_text: "theo quy định về điều khoản chuyển tiếp tại Điều 3 và lộ trình áp dụng tại Điều 4"
+  - kind: TransitionRule
+    where: "Article 3, Article 4"
+    date_pattern: 'ngày (\d{1,2}) tháng (\d{1,2}) năm (\d{4})'
+
+citation:
+  document_label: "Thông tư 06/2025/TT-BTNMT"
+  Article: "Điều {number}"
+  Clause: "Khoản {number}"
+  Point: "điểm {label}"
+  Preamble: "Căn cứ ban hành"

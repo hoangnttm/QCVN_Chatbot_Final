@@ -1,0 +1,38 @@
+# Vocabulary shared by every document profile (plan 2026-10-06, G1 step 0.8).
+#
+# provision_roles: a heading (lower case, substring) gives the provisions under it a role;
+#   the nearest heading on the way up wins, and within a heading the first entry wins.
+#   A grammar may add its own `provision_roles`; they are tried before these.
+# inherited_roles: provisions of a promulgating circular that also govern the regulation
+#   it promulgates (effective date, transition, roadmap …).
+provision_roles:
+- role: scope
+  heading: phạm vi điều chỉnh
+- role: subjects
+  heading: đối tượng áp dụng
+- role: definitions
+  heading: giải thích thuật ngữ
+- role: definitions
+  heading: giải thích từ ngữ
+- role: effectivity
+  heading: hiệu lực thi hành
+- role: transition
+  heading: điều khoản chuyển tiếp
+- role: roadmap
+  heading: lộ trình áp dụng
+- role: implementation
+  heading: tổ chức thực hiện
+- role: responsibility
+  heading: trách nhiệm
+- role: method
+  heading: phương pháp xác định
+- role: method
+  heading: phương pháp, kỹ thuật
+- role: management
+  heading: quy định quản lý
+inherited_roles:
+- effectivity
+- implementation
+- registry
+- roadmap
+- transition

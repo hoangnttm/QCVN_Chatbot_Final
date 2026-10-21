@@ -1,0 +1,179 @@
+# Tier M — multi-hop questions (plan docs/plans/2026-09-29-graph-ppr-path-verification.md §4.6, PO D32).
+#
+# Every item = one table cell read from the raw source (rawtables.py, as tier A) + one or more "hops":
+# a clause of another part of the corpus that the answer cannot be given without. Hops are written
+# here by hand from the raw files in sources/ (line numbers are whole-file lines, the quote must occur
+# in them — gold_multihop.py refuses to generate otherwise). Nothing is taken from Neo4j or the
+# parser, so the set does not favour the graph under evaluation. No LLM involved.
+version: 1
+seed: 20260929
+dev_every: 4  # every 4th item of a pattern (after a seeded shuffle of clusters) goes to dev → 25 %
+
+hops:
+  DZ_WW:
+    chunk_id: "chunk:TT_06_2025/Article2/Clause4"
+    document_id: TT_06_2025
+    line_start: 38
+    line_end: 38
+    quote: "trường hợp chưa xác định được phân vùng xả thải nước thải thì áp dụng Cột B quy định tại Bảng 1 và Bảng 2 của QCVN 40:2025/BTNMT"
+  DZ_EM:
+    chunk_id: "chunk:TT_45_2024/Article2/Clause4"
+    document_id: TT_45_2024
+    line_start: 57
+    line_end: 57
+    quote: "Trường hợp chưa xác định được phân vùng môi trường thì áp dụng Cột B quy định tại Bảng 1 và Bảng 2 của QCVN 19:2024/BTNMT"
+  ZD_WW_A:
+    chunk_id: "chunk:QCVN_40_2025/Section1/Section1.3/Definition1.3.3/Point1.3.3.1"
+    document_id: QCVN_40_2025
+    line_start: 112
+    line_end: 112
+    quote: "quy định giá trị giới hạn cho phép của thông số ô nhiễm trong nước thải khi xả ra nguồn nước tiếp nhận có chức năng cấp nước cho mục đích sinh hoạt"
+  ZD_WW_B:
+    chunk_id: "chunk:QCVN_40_2025/Section1/Section1.3/Definition1.3.3/Point1.3.3.2"
+    document_id: QCVN_40_2025
+    line_start: 113
+    line_end: 113
+    quote: "có mục đích quản lý, cải thiện chất lượng môi trường nước như Mức B Bảng 2, Bảng 3 QCVN 08:2023/BTNMT"
+  ZD_WW_C:
+    chunk_id: "chunk:QCVN_40_2025/Section1/Section1.3/Definition1.3.3/Point1.3.3.3"
+    document_id: QCVN_40_2025
+    line_start: 114
+    line_end: 114
+    quote: "nguồn nước tiếp nhận không thuộc các trường hợp quy định tại Mục 1.3.3.1 và Mục 1.3.3.2 Quy chuẩn này"
+  ZD_EM_A:
+    chunk_id: "chunk:QCVN_19_2024/Section1/Section1.3/Definition1.3.13/Point1.3.13.1"
+    document_id: QCVN_19_2024
+    line_start: 60
+    line_end: 60
+    quote: "có địa điểm hoạt động nằm trong vùng bảo vệ nghiêm ngặt"
+  ZD_EM_B:
+    chunk_id: "chunk:QCVN_19_2024/Section1/Section1.3/Definition1.3.13/Point1.3.13.2"
+    document_id: QCVN_19_2024
+    line_start: 61
+    line_end: 61
+    quote: "có địa điểm hoạt động nằm trong vùng hạn chế phát thải"
+  ZD_EM_C:
+    chunk_id: "chunk:QCVN_19_2024/Section1/Section1.3/Definition1.3.13/Point1.3.13.3"
+    document_id: QCVN_19_2024
+    line_start: 62
+    line_end: 62
+    quote: "có địa điểm hoạt động không thuộc các trường hợp quy định tại Mục 1.3.13.1 và Mục 1.3.13.2 Quy chuẩn này"
+  TR_WW_ROADMAP:
+    chunk_id: "chunk:TT_06_2025/Article4/Clause2"
+    document_id: TT_06_2025
+    line_start: 46
+    line_end: 46
+    quote: "Kể từ ngày 01 tháng 01 năm 2032, các trường hợp quy định tại khoản 1 Điều 3 Thông tư này phải đáp ứng yêu cầu quy định tại QCVN 40:2025/BTNMT"
+  TR_WW_SCOPE:
+    chunk_id: "chunk:TT_06_2025/Article3/Clause1"
+    document_id: TT_06_2025
+    line_start: 41
+    line_end: 41
+    quote: "Cơ sở đã đi vào vận hành"
+  TR_EM_ROADMAP:
+    chunk_id: "chunk:TT_45_2024/Article4/Clause2"
+    document_id: TT_45_2024
+    line_start: 71
+    line_end: 71
+    quote: "Kể từ ngày 01 tháng 01 năm 2032, các trường hợp quy định tại khoản 1 Điều 3 Thông tư này phải đáp ứng yêu cầu quy định tại QCVN 19:2024/BTNMT"
+  TR_EM_SCOPE:
+    chunk_id: "chunk:TT_45_2024/Article3/Clause1"
+    document_id: TT_45_2024
+    line_start: 61
+    line_end: 61
+    quote: "Cơ sở đã đi vào vận hành"
+  RP_WW:
+    chunk_id: "chunk:QCVN_40_2025/Preamble#3"
+    document_id: QCVN_40_2025
+    line_start: 83
+    line_end: 87
+    quote: "QCVN 40:2011/BTNMT - Quy chuẩn kỹ thuật quốc gia về nước thải công nghiệp"
+  FN_TOC:
+    chunk_id: "chunk:QCVN_40_2025/Section2/Section2.1/Table1/Footnote#25"
+    document_id: QCVN_40_2025
+    line_start: 134
+    line_end: 134
+    quote: "Tổ chức, cá nhân được lựa chọn áp dụng TOC hoặc COD"
+  FN_O2_B1:
+    chunk_id: "chunk:QCVN_19_2024/Section2/Section2.1/Table1/Footnote#39"
+    document_id: QCVN_19_2024
+    line_start: 330
+    line_end: 330
+    quote: "tại Cột A, Cột B và Cột C Bảng này là giá trị hàm lượng ôxy tham chiếu"
+  FN_O2_B2:
+    chunk_id: "chunk:QCVN_19_2024/Section2/Section2.2/Table2/Footnote#44"
+    document_id: QCVN_19_2024
+    line_start: 458
+    line_end: 458
+    quote: "quy định tại Cột A, Cột B và Cột C Bảng này là giá trị hàm lượng ôxy tham chiếu"
+
+# zone described by its definition, never by the column letter (pattern ZD)
+zone_descriptions:
+  wastewater:
+    A:
+      - "xả ra nguồn nước tiếp nhận có chức năng cấp nước cho mục đích sinh hoạt"
+      - "xả vào nguồn nước được dùng để cấp nước sinh hoạt"
+    B:
+      - "xả ra nguồn nước tiếp nhận thuộc Mức B theo QCVN 08:2023/BTNMT"
+      - "xả vào nguồn nước mặt có mục đích quản lý, cải thiện chất lượng như Mức B của QCVN 08:2023/BTNMT"
+    C:
+      - "xả ra nguồn nước tiếp nhận không dùng cấp nước sinh hoạt và không thuộc Mức A, Mức B của QCVN 08:2023/BTNMT"
+  emission:
+    A:
+      - "có địa điểm hoạt động trong vùng bảo vệ nghiêm ngặt"
+      - "đặt tại vùng bảo vệ nghiêm ngặt"
+    B:
+      - "có địa điểm hoạt động trong vùng hạn chế phát thải"
+      - "nằm trong vùng hạn chế phát thải"
+    C:
+      - "có địa điểm hoạt động không thuộc vùng bảo vệ nghiêm ngặt hay vùng hạn chế phát thải"
+
+# how many cells per pattern × domain (sampled with feature coverage, seeded)
+quota:
+  DZ: {wastewater: 12, emission: 12}
+  ZD: {wastewater: 12, emission: 12}
+  TR: {wastewater: 12, emission: 12}
+  RP: {wastewater: 18}
+  FN_TOC: {wastewater: 6}
+  FN_O2: {emission: 18}
+
+# {param} parameter phrase · {ctx} ", lưu lượng …" / " của lò hơi …" · {zone} column phrase (tier A)
+# {zone_desc} definition phrase (ZD)
+templates:
+  DZ:
+    wastewater:
+      - {id: dz_w1, text: "Chưa xác định được phân vùng xả thải của cơ sở thì {param} trong nước thải công nghiệp{ctx} tối đa là bao nhiêu?"}
+      - {id: dz_w2, text: "Địa phương chưa phân vùng xả thải nước thải. Giới hạn {param}{ctx} áp dụng cho nhà máy là bao nhiêu?"}
+      - {id: dz_w3, text: "Nếu chưa biết nguồn tiếp nhận thuộc phân vùng nào, nước thải công nghiệp{ctx} phải đạt {param} ở mức nào?"}
+    emission:
+      - {id: dz_e1, text: "Chưa xác định được phân vùng môi trường thì {param} trong khí thải{ctx} được phép tối đa bao nhiêu?"}
+      - {id: dz_e2, text: "Địa phương chưa có phân vùng môi trường. Giới hạn {param}{ctx} là bao nhiêu?"}
+      - {id: dz_e3, text: "Không rõ cơ sở nằm ở vùng nào, khí thải{ctx} phải đạt {param} ở mức nào?"}
+  ZD:
+    wastewater:
+      - {id: zd_w1, text: "Nhà máy {zone_desc}. Giới hạn {param} trong nước thải công nghiệp{ctx} là bao nhiêu?"}
+      - {id: zd_w2, text: "Nước thải công nghiệp{ctx} {zone_desc} thì {param} không được vượt quá bao nhiêu?"}
+      - {id: zd_w3, text: "Cơ sở {zone_desc}: ngưỡng {param}{ctx} theo QCVN 40:2025 là gì?"}
+    emission:
+      - {id: zd_e1, text: "Cơ sở {zone_desc}. Giới hạn {param} trong khí thải{ctx} là bao nhiêu?"}
+      - {id: zd_e2, text: "Nhà máy {zone_desc} thì {param}{ctx} tối đa bao nhiêu?"}
+      - {id: zd_e3, text: "Khí thải{ctx} của cơ sở {zone_desc} phải đạt {param} ở mức nào?"}
+  TR:
+    wastewater:
+      - {id: tr_w1, text: "Cơ sở đã đi vào vận hành trước khi Thông tư 06/2025/TT-BTNMT có hiệu lực. Kể từ ngày 01/01/2032, {param}{ctx} ở {zone} phải đáp ứng mức nào?"}
+      - {id: tr_w2, text: "Nhà máy đang hoạt động từ trước năm 2025 thì từ 01/01/2032 giới hạn {param} ({zone}{ctx}) là bao nhiêu?"}
+    emission:
+      - {id: tr_e1, text: "Cơ sở đã đi vào vận hành trước khi Thông tư 45/2024/TT-BTNMT có hiệu lực. Kể từ ngày 01/01/2032, {param}{ctx} ở {zone} phải đáp ứng mức nào?"}
+      - {id: tr_e2, text: "Nhà máy đang hoạt động từ trước khi QCVN 19:2024 có hiệu lực thì từ 01/01/2032 giới hạn {param}{ctx} ({zone}) là bao nhiêu?"}
+  RP:
+    wastewater:
+      - {id: rp_w1, text: "QCVN 40:2011/BTNMT về nước thải công nghiệp đã bị thay thế. Theo quy chuẩn thay thế, {param}{ctx}, {zone} là bao nhiêu?"}
+      - {id: rp_w2, text: "Tôi vẫn đang dùng QCVN 40:2011/BTNMT. Quy chuẩn nào thay thế nó và giới hạn {param} ({zone}{ctx}) mới là bao nhiêu?"}
+  FN_TOC:
+    wastewater:
+      - {id: fn_t1, text: "Doanh nghiệp chọn áp dụng TOC thay cho COD. Giới hạn TOC trong nước thải công nghiệp{ctx}, {zone} là bao nhiêu?"}
+      - {id: fn_t2, text: "Có được dùng chỉ tiêu TOC thay COD không, và nếu dùng thì TOC ({zone}{ctx}) tối đa bao nhiêu?"}
+  FN_O2:
+    emission:
+      - {id: fn_o1, text: "{param} trong khí thải{ctx} ở {zone} tối đa bao nhiêu, và giá trị đó tính theo hàm lượng ôxy tham chiếu nào?"}
+      - {id: fn_o2, text: "Giới hạn {param}{ctx} ({zone}) là bao nhiêu? Con số trong ngoặc ở cột này có nghĩa là gì?"}

@@ -1,0 +1,120 @@
+document_id: QCVN_40_2025
+source_format: md
+line_range: [76, 431]
+preprocess: [strip_noise_lines, latex_to_text]
+
+structure:
+  - kind: Title
+    match: '^# (?P<code>QCVN 40:2025/BTNMT)'
+    block: until_blank
+  - kind: Preamble
+    match: '^### Lời nói đầu'
+    block: until_next_heading
+    note: "chứa danh sách 'thay thế các Quy chuẩn:' → REPLACES"
+  - kind: Section
+    level: 1
+    match: '^### (?P<number>\d+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Document]
+  - kind: Section
+    level: 2
+    match: '^#### (?P<number>\d+\.\d+)\.\s+(?P<title>.+)$'
+    block: line
+    parent_kinds: [Section]
+  - kind: Definition
+    match: '^(?P<number>1\.3\.\d+)\.\s+\*\*(?P<term>[^*]+)\*\*\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+    priority_over: [Clause]
+  - kind: Clause
+    match: '^(?P<number>\d+\.\d+\.\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+  - kind: Clause
+    match: '^(?P<number>\d+\.\d+)\.\s+(?P<text>.+)$'
+    block: line
+    parent_kinds: [Section]
+    note: "Mục 3–6 dùng khoản dạng N.N. ngay dưới Section cấp 1"
+  - kind: Point
+    match: '^\s*-\s*(?P<number>\d+\.\d+\.\d+(?:\.\d+)?)\.\s+(?:\*\*(?P<term>[^*]+)\*\*\s+)?(?P<text>.+)$'
+    block: line
+    parent_kinds: [Clause, Definition]
+  - kind: Table
+    match: '^\*\*Bảng (?P<number>\d+)\.\s*(?P<title>.+?)\*\*\s*$'
+    block: table
+    parent_kinds: [Section, Clause]
+  - kind: Paragraph
+    match: '^(?!\||#|\*\*Bảng|\*Chú thích|---)(?P<text>\S.+)$'
+    block: line
+    parent_kinds: [Clause, Point, Definition, Section, Appendix]
+    note: "đoạn văn không đánh số (ví dụ dòng dẫn 'Căn cứ quy định tại Mục 1.3.3…'); phải đứng SAU Table/Footnote"
+  - kind: Footnote
+    match: '^\*Chú thích:?'
+    block: until_blank
+    parent_kinds: [Table, AppendixTable, Section, Appendix]
+    note: "khớp cả '*Chú thích:*' (nhiều dòng) và '*Chú thích: câu.*' (một dòng)"
+  - kind: Appendix
+    match: '^### PHỤ LỤC (?P<number>\d+)'
+    block: line
+    parent_kinds: [Document]
+    title_from_next_line: '^\*\*(?P<title>.+)\*\*$'
+  - kind: AppendixTable
+    match: '^\| TT'
+    block: table
+    parent_kinds: [Appendix]
+
+boilerplate:
+  - '^---\s*$'
+
+tables:
+  QCVN40_2025.B1:
+    title_match: 'Bảng 1\.'
+    header_rows: 3          # tiêu đề cột + tầng lưu lượng + tầng A/B/C
+    columns: [tt, parameter, unit, "F<=2000.A", "F<=2000.B", "F<=2000.C", "F>2000.A", "F>2000.B", "F>2000.C"]
+    header_condition_axis: { name: flow_regime, values: { "F<=2000": { op: "<=", value: 2000, unit: m3_per_day }, "F>2000": { op: ">", value: 2000, unit: m3_per_day } } }
+    zone_axis: [A, B, C]
+    cell_split: "<br>"
+    split_creates_logical_rows: true    # COD/TOC → 2 dòng logic .a/.b
+    value_grammar: le_value
+    footnote_after: true
+  QCVN40_2025.B2:
+    title_match: 'Bảng 2\.'
+    header_rows: 1
+    columns: [tt, parameter, unit, A, B, C]
+    zone_axis: [A, B, C]
+    group_header_when: all_value_cells_empty
+    sub_row_pattern: '^(?P<parent>\d+)\.(?P<sub>\d+)$'
+    value_grammar: le_value_or_range
+    condition_extractors:
+      - { type: receiving_body, pattern: 'Nguồn nước tiếp nhận là (?P<body>[^:]+)' }
+      - { type: sector_scope, pattern: 'Áp dụng đối với (?P<scope>.+)$' }
+      - { type: exclusion, pattern: '\((?:không áp dụng|trừ) (?P<excl>[^)]+)\)' }
+  QCVN40_2025.PL1:
+    appendix: 1
+    header_rows: 1
+    columns: [tt, item, methods]
+    cell_split: "<br>"
+    methods_ordered: true     # phương pháp xếp đầu = phương pháp trọng tài (Mục 3.1)
+    sampling_rows: [1, 2]
+  QCVN40_2025.PL2:
+    appendix: 2
+    header_rows: 1
+    columns: [tt, sector, vsic_codes, characteristic_parameters, other_parameters]
+    group_header_when: tt_matches '^\*\*[IVX]+\*\*$'
+    cell_split: "<br>"
+    # điều kiện có thể chứa dấu hai chấm trong ngoặc ("(lò nung: Nhôm, Đồng, Kẽm)") → lấy dấu ':' cuối cùng
+    conditional_pattern: '^-\s*(?P<condition>.+):\s*(?P<params>[^:]+)$'
+
+citation:
+  document_label: "QCVN 40:2025/BTNMT"
+  hierarchical_numbers: true
+  Section: "Mục {number}"
+  Clause: "Mục {number}"
+  Point: "Mục {number}"
+  Definition: "Mục {number}"
+  Table: "Bảng {number}"
+  TableRow: "TT {row_no}"
+  Zone: "Cột {zone}"
+  Appendix: "Phụ lục {number}"
+  Footnote: "Chú thích"
+  Preamble: "Lời nói đầu"

@@ -1,0 +1,82 @@
+# Alias phía truy vấn (query understanding). Entity aliases nằm trong từng từ điển; file này chỉ
+# chứa các cụm người dùng hay gõ mà không trùng tên chuẩn, hoặc cần ánh xạ sang entity loại khác.
+# zone: entity_id có thể là mã trần ("B"); router gắn domain sau khi định tuyến miền.
+aliases:
+  # --- miền ---
+  - { pattern: "nước thải", entity_type: domain, entity_id: wastewater }
+  - { pattern: "xả thải ra sông", entity_type: domain, entity_id: wastewater }
+  - { pattern: "khí thải", entity_type: domain, entity_id: emission }
+  - { pattern: "ống khói", entity_type: domain, entity_id: emission }
+  - { pattern: "lò hơi", entity_type: domain, entity_id: emission }
+  - { pattern: "lò đốt", entity_type: domain, entity_id: emission }
+  # --- cột / vùng ---
+  - { pattern: "cột a", entity_type: zone, entity_id: A }
+  - { pattern: "cột b", entity_type: zone, entity_id: B }
+  - { pattern: "cột c", entity_type: zone, entity_id: C }
+  - { pattern: "loại a", entity_type: zone, entity_id: A }
+  - { pattern: "loại b", entity_type: zone, entity_id: B }
+  - { pattern: "vùng bảo vệ nghiêm ngặt", entity_type: zone, entity_id: emission.A }
+  - { pattern: "vùng hạn chế phát thải", entity_type: zone, entity_id: emission.B }
+  - { pattern: "nguồn cấp nước sinh hoạt", entity_type: zone, entity_id: wastewater.A }
+  # --- thông số (viết tắt / cách gọi phổ biến) ---
+  - { pattern: "bod", entity_type: parameter, entity_id: BOD5 }
+  - { pattern: "bod5", entity_type: parameter, entity_id: BOD5 }
+  - { pattern: "nhu cầu oxy sinh hóa", entity_type: parameter, entity_id: BOD5 }
+  - { pattern: "cod", entity_type: parameter, entity_id: COD }
+  - { pattern: "nhu cầu oxy hóa học", entity_type: parameter, entity_id: COD }
+  - { pattern: "toc", entity_type: parameter, entity_id: TOC }
+  - { pattern: "tss", entity_type: parameter, entity_id: TSS }
+  - { pattern: "chất rắn lơ lửng", entity_type: parameter, entity_id: TSS }
+  - { pattern: "t-n", entity_type: parameter, entity_id: T_N }
+  - { pattern: "tổng n", entity_type: parameter, entity_id: T_N }
+  - { pattern: "tổng nitơ", entity_type: parameter, entity_id: T_N }
+  - { pattern: "tổng nito", entity_type: parameter, entity_id: T_N }
+  - { pattern: "t-p", entity_type: parameter, entity_id: T_P }
+  - { pattern: "tổng p", entity_type: parameter, entity_id: T_P }
+  - { pattern: "tổng phốt pho", entity_type: parameter, entity_id: T_P }
+  - { pattern: "tổng photpho", entity_type: parameter, entity_id: T_P }
+  - { pattern: "tổng phospho", entity_type: parameter, entity_id: T_P }
+  - { pattern: "amoni", entity_type: parameter, entity_id: NH4_N }
+  - { pattern: "amonia", entity_type: parameter, entity_id: NH4_N }
+  - { pattern: "nh4", entity_type: parameter, entity_id: NH4_N }
+  - { pattern: "coliform", entity_type: parameter, entity_id: Coliform }
+  - { pattern: "tổng coliform", entity_type: parameter, entity_id: Coliform }
+  - { pattern: "độ màu", entity_type: parameter, entity_id: Color }
+  - { pattern: "màu", entity_type: parameter, entity_id: Color }
+  - { pattern: "bụi", entity_type: parameter, entity_id: PM }
+  - { pattern: "bụi tổng", entity_type: parameter, entity_id: PM }
+  - { pattern: "tsp", entity_type: parameter, entity_id: PM }
+  - { pattern: "co", entity_type: parameter, entity_id: CO }
+  - { pattern: "cacbon monoxit", entity_type: parameter, entity_id: CO }
+  - { pattern: "carbon monoxide", entity_type: parameter, entity_id: CO }
+  - { pattern: "so2", entity_type: parameter, entity_id: SO2 }
+  - { pattern: "lưu huỳnh dioxit", entity_type: parameter, entity_id: SO2 }
+  - { pattern: "lưu huỳnh điôxit", entity_type: parameter, entity_id: SO2 }
+  - { pattern: "lưu huỳnh đioxit", entity_type: parameter, entity_id: SO2 }
+  - { pattern: "tvoc", entity_type: parameter, entity_id: TVOC }
+  - { pattern: "hợp chất hữu cơ dễ bay hơi", entity_type: parameter, entity_id: TVOC }
+  - { pattern: "nox", entity_type: parameter, entity_id: NOx }
+  - { pattern: "nitơ oxit", entity_type: parameter, entity_id: NOx }
+  - { pattern: "no2", entity_type: parameter, entity_id: NOx }
+  - { pattern: "hcl", entity_type: parameter, entity_id: HCl }
+  - { pattern: "axit clohydric", entity_type: parameter, entity_id: HCl }
+  - { pattern: "nh3", entity_type: parameter, entity_id: NH3 }
+  - { pattern: "amoniac", entity_type: parameter, entity_id: NH3 }
+  - { pattern: "độ khói", entity_type: parameter, entity_id: Smoke_opacity }
+  # --- nguồn tiếp nhận ---
+  - { pattern: "xả ra hồ", entity_type: receiving_body, entity_id: lake }
+  - { pattern: "xả ra sông", entity_type: receiving_body, entity_id: river }
+  - { pattern: "xả ra biển", entity_type: receiving_body, entity_id: sea }
+  - { pattern: "nước lợ", entity_type: receiving_body, entity_id: saline_brackish }
+  - { pattern: "nước mặn", entity_type: receiving_body, entity_id: saline_brackish }
+  # --- nhiên liệu ---
+  - { pattern: "đốt than", entity_type: fuel, entity_id: solid }
+  - { pattern: "đốt dầu", entity_type: fuel, entity_id: liquid }
+  - { pattern: "đốt gas", entity_type: fuel, entity_id: gas }
+  - { pattern: "đốt trấu", entity_type: fuel, entity_id: biomass_solid }
+  - { pattern: "đốt củi", entity_type: fuel, entity_id: biomass_solid }
+  # --- đơn vị ---
+  - { pattern: "mg/l", entity_type: unit, entity_id: mg_L }
+  - { pattern: "mg/nm3", entity_type: unit, entity_id: mg_Nm3 }
+  - { pattern: "m3/ngày", entity_type: unit, entity_id: m3_per_day }
+  - { pattern: "khối/ngày", entity_type: unit, entity_id: m3_per_day }

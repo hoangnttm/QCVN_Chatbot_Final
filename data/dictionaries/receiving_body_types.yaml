@@ -1,0 +1,19 @@
+# Loại nguồn nước tiếp nhận — trục điều kiện của QCVN 40:2025 Bảng 2 (T-P, Clorua).
+receiving_body_types:
+  - code: lake
+    name: "Hồ, ao, đầm (gọi chung là hồ)"
+    aliases: ["hồ", "ao", "đầm", "hồ ao đầm"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.1"]
+  - code: river
+    name: "Sông, suối, khe, kênh, mương, rạch (gọi chung là sông)"
+    aliases: ["sông", "suối", "khe", "kênh", "mương", "rạch"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.2"]
+  - code: sea
+    name: "Vùng nước biển"
+    aliases: ["biển", "vùng nước biển", "nước biển", "ven biển"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.2"]
+  - code: saline_brackish
+    name: "Nguồn nước mặn, nước lợ"
+    aliases: ["nước mặn", "nước lợ", "mặn", "lợ"]
+    sources: ["QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 30 (Clorua không áp dụng)"]
+    note: "Không phải một cấp loại trừ với lake/river/sea; là thuộc tính độ mặn của nguồn tiếp nhận"

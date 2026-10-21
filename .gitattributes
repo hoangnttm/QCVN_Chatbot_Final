@@ -1,0 +1,11 @@
+# Normalise line endings to LF everywhere (Windows dev boxes have core.autocrlf=true).
+* text=auto eol=lf
+
+# Source documents are immutable and hashed in data/registry/documents.yaml:
+# never let git rewrite their bytes (no EOL conversion, no diff mangling).
+sources/** -text -diff
+
+# Binary assets
+*.pdf -text -diff
+*.png -text
+*.jpg -text

@@ -1,0 +1,76 @@
+# .gitignore của repo NỘP MÃ NGUỒN CUỐI CÙNG (sinh bởi infra/submission/export.py).
+# Giữ lại: mã nguồn (backend/, frontend/, infra/), dữ liệu cấu hình và văn bản nguồn
+# (data/, sources/), dữ liệu kiểm thử (data/gold/, backend/tests/), tài liệu kỹ thuật
+# tối thiểu (README.md, docs/adr, docs/api, các spec trong docs/*.md).
+
+# ---------- Giống repo phát triển ----------
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+infra/.env
+
+# Data caches, models, build artefacts
+.cache/
+models/
+data/cache/
+data/derived/
+data/gold/work/
+data/backups/
+*.log
+
+# IDE / OS / agent-local settings
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+.$*.bkp
+*.drawio.bkp
+
+# ---------- Không nộp: kế hoạch, báo cáo, hồ sơ duyệt, UAT, spike, sơ đồ, tài nguyên báo cáo ----------
+PLAN.md
+software-context.md
+*.docx
+*.pptx
+docs/plans/
+docs/reports/
+docs/review/
+docs/uat/
+docs/spikes/
+docs/diagrams/
+docs/env-check-*.md
+docs/production-readiness-proposal.md
+docs/scope-statement.md
+docs/bao-cao-*.md
+docs/*-de-hieu.md
+docs/so-sanh-*.md
+report-resources/
+data/review/
+
+# Tệp do công cụ AI sinh ra, không phải mã nguồn
+frontend/AGENTS.md
+frontend/CLAUDE.md
+CLAUDE.md
+AGENTS.md
+
+# Bộ công cụ xuất bản nộp (chỉ cần ở repo phát triển)
+infra/submission/

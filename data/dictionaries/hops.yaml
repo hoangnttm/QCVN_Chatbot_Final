@@ -1,0 +1,81 @@
+# Bước nối của câu hỏi nhiều bước (kế hoạch 2026-10-12, bước 3.4, phần G; quyết định D66, D67).
+#
+# Một bước nối = căn cứ thứ hai mà câu trả lời cần, ngoài ô bảng chứa giá trị.
+#
+#   lookup    phép tra trên fact store (mỗi phép tra có một hàm trong app/retrieval/hops.py):
+#               default_zone       điều khoản quy định cột mặc định khi chưa phân vùng
+#               zone_definition    điểm định nghĩa của cột (địa chỉ ghi ở zones.yaml)
+#               roadmap            điều khoản lộ trình có mốc ngày
+#               replacement        quan hệ thay thế / bãi bỏ giữa hai văn bản
+#               footnote           chú thích gắn với ô ứng viên
+#   effect    fill_slot        điền một slot mà câu hỏi không nêu (kèm điều khoản làm nguồn)
+#             switch_document  đổi văn bản được hỏi sang văn bản thay thế
+#             explain          chỉ bổ sung căn cứ giải thích
+#   cues      câu hỏi chứa một trong các cụm này thì có dấu hiệu cần bước nối
+#   role      vai trò của căn cứ trong gói căn cứ (bước G4)
+#   enabled   false = đã khai nhưng chưa bật vì chưa có câu đo (D67)
+#
+# Bước làm đổi slot (switch_document, fill_slot) chạy trước khi tra ô ứng viên; bước explain
+# chạy sau. Thứ tự trong tệp là thứ tự chạy trong mỗi nhóm.
+hops:
+  - type: replacement
+    lookup: replacement
+    effect: switch_document
+    role: effectivity
+    cues: []  # dấu hiệu là slot văn bản trỏ tới một văn bản đã bị thay thế
+  - type: default_value
+    lookup: default_zone
+    effect: fill_slot
+    dimension: zone
+    role: applicability
+    cues:
+      - chưa xác định được phân vùng
+      - chưa xác định phân vùng
+      - chưa phân vùng
+      - chưa có phân vùng
+      - chưa biết nguồn tiếp nhận thuộc phân vùng
+      - không rõ cơ sở nằm ở vùng nào
+      - chưa biết thuộc vùng nào
+  - type: zone_definition
+    lookup: zone_definition
+    effect: explain
+    role: definition
+    cues: []  # dấu hiệu là slot cột được mô tả thay vì gọi tên
+  - type: roadmap
+    lookup: roadmap
+    effect: explain
+    role: transition
+    cues:
+      - đã đi vào vận hành
+      - đã vận hành
+      - đang hoạt động từ trước
+      - lộ trình
+  - type: footnote
+    lookup: footnote
+    effect: explain
+    role: note
+    cues:
+      - ôxy tham chiếu
+      - oxy tham chiếu
+      - trong ngoặc
+      - toc thay
+      - thay cho cod
+      - thay cod
+  - type: method
+    lookup: method
+    effect: explain
+    role: method
+    enabled: false
+    cues: []
+  - type: term_definition
+    lookup: term_definition
+    effect: explain
+    role: definition
+    enabled: false
+    cues: []
+  - type: scope
+    lookup: scope
+    effect: explain
+    role: scope
+    enabled: false
+    cues: []

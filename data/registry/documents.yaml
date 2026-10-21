@@ -1,0 +1,234 @@
+# Document Registry v1 — PLAN.md Phụ lục D.
+# Schema: backend/app/registry/schema.py. Verified by backend/tests/test_registry.py.
+#
+# Rules:
+#  - sources/ is immutable; sha256 + size must match (test fails otherwise).
+#  - text_status=draft  => dates may only be declared by an admin (facts.source=admin_declared)
+#    and are cited as "registry_fact" evidence with a warning (PLAN.md §4.5).
+#  - 2026-09-24: PO confirmed TT_45_2024, TT_10_2021 and QCVN_19_2024 are the official texts,
+#    checked against the originals => text_status=official. Their files still leave number/dates
+#    blank, so those values stay admin_declared registry facts (cited with a provenance warning).
+#  - Every admin_declared fact needs declared_by + declared_at. Changing this file requires
+#    a reviewer with the Product Owner role.
+
+version: 1
+
+documents:
+  # ---------------------------------------------------------------- TT 06/2025 + QCVN 40:2025
+  - document_id: TT_06_2025
+    document_code: "06/2025/TT-BTNMT"
+    document_type: circular
+    title: "Thông tư ban hành Quy chuẩn kỹ thuật quốc gia về nước thải công nghiệp"
+    issuer: "Bộ Tài nguyên và Môi trường"
+    domain: wastewater
+    text_status: official
+    source:
+      file: "th_ng_t_06_2025_tt_btnmt_v_qcvn_40_2025_btnmt.md"
+      format: md
+      sha256: "dd47bfea84e0b5c4fb1fbbdaf9af203d7ddc864713b9c0d2f2439ea19185ee32"
+      size_bytes: 60945
+      line_range: [1, 71]
+      noise_lines: [432, 434]
+      note: "File chứa 2 văn bản: Thông tư (dòng 1–71) rồi QCVN 40:2025 (dòng 76–431). Chưa có PDF gốc để đối chiếu."
+    grammar: grammars/tt_06_2025.yaml
+    ingest_scope: full
+    facts:
+      - { fact_type: document_number, value: "06/2025/TT-BTNMT", source: from_text, evidence: "dòng 5" }
+      - { fact_type: issue_date, value: "2025-02-28", source: from_text, evidence: "dòng 6: Hà Nội, ngày 28 tháng 02 năm 2025" }
+      - { fact_type: signing_place, value: "Hà Nội", source: from_text, evidence: "dòng 6" }
+      - { fact_type: effective_date, value: "2025-09-01", source: from_text, evidence: "Điều 2, Khoản 1 (dòng 24)" }
+      - { fact_type: signer, value: "KT. Bộ trưởng — Thứ trưởng Lê Công Thành", source: from_text, evidence: "dòng 68–71" }
+    relations:
+      - { type: PROMULGATES, target: QCVN_40_2025, evidence: "Điều 1" }
+      - { type: REPEALS, target: TT_47_2011, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo điều khoản chuyển tiếp tại Điều 3 và lộ trình tại Điều 4" }
+      - { type: REPEALS, target: TT_11_2015, evidence: "Điều 2, Khoản 2, điểm b", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: TT_12_2015, evidence: "Điều 2, Khoản 2, điểm c", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: TT_13_2015, evidence: "Điều 2, Khoản 2, điểm d", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: TT_76_2015, evidence: "Điều 2, Khoản 2, điểm đ", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: TT_77_2015, evidence: "Điều 2, Khoản 2, điểm e", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: TT_31_2017, evidence: "Điều 2, Khoản 2, điểm g", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_25_2009, evidence: "Điều 2, Khoản 3, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_28_2010, evidence: "Điều 2, Khoản 3, điểm b", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_29_2010, evidence: "Điều 2, Khoản 3, điểm c", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_52_2017, evidence: "Điều 2, Khoản 3, điểm d", condition: "theo Điều 3, Điều 4" }
+
+  - document_id: QCVN_40_2025
+    document_code: "QCVN 40:2025/BTNMT"
+    document_type: qcvn
+    title: "Quy chuẩn kỹ thuật quốc gia về nước thải công nghiệp"
+    issuer: "Bộ Tài nguyên và Môi trường"
+    domain: wastewater
+    text_status: official
+    source:
+      file: "th_ng_t_06_2025_tt_btnmt_v_qcvn_40_2025_btnmt.md"
+      format: md
+      sha256: "dd47bfea84e0b5c4fb1fbbdaf9af203d7ddc864713b9c0d2f2439ea19185ee32"
+      size_bytes: 60945
+      line_range: [76, 431]
+      noise_lines: [432, 434]
+    grammar: grammars/qcvn_40_2025.yaml
+    ingest_scope: full
+    facts:
+      - { fact_type: effective_date, value: "2025-09-01", source: from_text, evidence: "TT 06/2025 Điều 2 Khoản 1 (kế thừa từ văn bản ban hành)" }
+    relations:
+      - { type: PROMULGATED_BY, target: TT_06_2025, evidence: "Lời nói đầu (dòng 81)" }
+      - { type: REPLACES, target: QCVN_25_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_28_2010, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_29_2010, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_40_2011, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_01_MT_2015, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_11_MT_2015, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_12_MT_2015, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_13_MT_2015, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_60_MT_2015, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_63_2017, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_52_2017, evidence: "Lời nói đầu" }
+      - { type: REFERENCES, target: QCVN_08_2023, evidence: "Mục 1.3.3.1, 1.3.3.2 (phân vùng nguồn nước mặt)" }
+      - { type: REFERENCES, target: QD_27_2018, evidence: "Phụ lục 2, chú thích (mã ngành kinh tế)" }
+      - { type: REFERENCES, target: ND_107_2016, evidence: "Mục 4.6" }
+      - { type: REFERENCES, target: QCVN_NUOC_THAI_SINH_HOAT, evidence: "Mục 4.9; Phụ lục 2 chú thích" }
+
+  # ---------------------------------------------------------------- QCVN 19:2024 + TT 45/2024
+  - document_id: QCVN_19_2024
+    document_code: "QCVN 19:2024/BTNMT"
+    document_type: qcvn
+    title: "Quy chuẩn kỹ thuật quốc gia về khí thải công nghiệp"
+    issuer: "Bộ Tài nguyên và Môi trường"
+    domain: emission
+    text_status: official
+    source:
+      file: "qcvn_19_2024_btnmt_quy_chu_n_k_thu_t_qu_c_gia_v_kh_th_i_c_ng_nghi_p.md"
+      format: md
+      sha256: "e7e4281f24d037f19e7b720b7c5b0de30209f87c00b543872aa561b4a2499155"
+      size_bytes: 90424
+      line_range: [1, 676]
+      noise_lines: [677, 680]
+      note: "Lời nói đầu để trống số Thông tư ban hành (dòng 14). PO xác nhận 2026-09-24: bản chính thức, đã đối chiếu với bản gốc → text_status=official (trước đó unverified). D70 (PO duyệt 2026-10-20): dòng 268 Bảng 1 TT 10 Dioxin/Furan sửa đơn vị pgTEQ/Nm³ → ngTEQ/Nm³ theo bản chính thức (TT 45/2024); sha256 cập nhật."
+    grammar: grammars/qcvn_19_2024.yaml
+    ingest_scope: full
+    facts: []   # ngày hiệu lực kế thừa từ TT_45_2024 (registry_fact admin_declared)
+    relations:
+      - { type: PROMULGATED_BY, target: TT_45_2024, evidence: "Lời nói đầu (số Thông tư để trống trong file)" }
+      - { type: REPLACES, target: QCVN_19_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_20_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_21_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_22_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_23_2009, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_34_2010, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_51_2017, evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_41_2011, scope: partial, target_part: "Bảng 1 và Bảng 4", evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_02_2012, scope: partial, target_part: "Bảng 2", evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_30_2012, scope: partial, target_part: "Bảng 2", evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_56_2013, scope: partial, target_part: "Bảng 4", evidence: "Lời nói đầu" }
+      - { type: REPLACES, target: QCVN_61_MT_2016, scope: partial, target_part: "Bảng 2", evidence: "Lời nói đầu" }
+      - { type: REFERENCES, target: ND_107_2016, evidence: "Mục 4.6" }
+
+  - document_id: TT_45_2024
+    document_code: "45/2024/TT-BTNMT"
+    document_type: circular
+    title: "Thông tư ban hành Quy chuẩn kỹ thuật quốc gia về khí thải công nghiệp"
+    issuer: "Bộ Tài nguyên và Môi trường"
+    domain: emission
+    text_status: official
+    source:
+      file: "45-btnmt.pdf"
+      format: pdf
+      sha256: "232edd722120d0c45d59e6f62f55a304ac5e4593edabd56463f635fca9448ca0"
+      size_bytes: 1567122
+      page_count: 3
+      note: "PO xác nhận 2026-09-24: bản chính thức, đã đối chiếu với bản gốc → text_status=official (trước đó draft). File vẫn trống số hiệu, ngày ký, ngày hiệu lực (Điều 2.1) nên số/ngày là registry_fact admin_declared; Điều 3.2 nhắc 'hệ số vùng (Kv)'."
+    grammar: grammars/tt_45_2024.yaml
+    ingest_scope: full
+    facts:
+      - { fact_type: document_number, value: "45/2024/TT-BTNMT", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: issue_date, value: "2024-12-30", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: signing_place, value: "Hà Nội", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: effective_date, value: "2025-07-01", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+    relations:
+      - { type: PROMULGATES, target: QCVN_19_2024, evidence: "Điều 1" }
+      - { type: REPEALS, target: QCVN_19_2009, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_20_2009, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_21_2009, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_22_2009, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_23_2009, evidence: "Điều 2, Khoản 2, điểm a", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_34_2010, evidence: "Điều 2, Khoản 2, điểm b", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_51_2017, evidence: "Điều 2, Khoản 2, điểm c", condition: "theo Điều 3, Điều 4" }
+      - { type: REPEALS, target: QCVN_41_2011, scope: partial, target_part: "Bảng 1 và Bảng 4", evidence: "Điều 2, Khoản 3, điểm a" }
+      - { type: REPEALS, target: QCVN_02_2012, scope: partial, target_part: "Bảng 2", evidence: "Điều 2, Khoản 3, điểm b" }
+      - { type: REPEALS, target: QCVN_30_2012, scope: partial, target_part: "Bảng 2", evidence: "Điều 2, Khoản 3, điểm b" }
+      - { type: REPEALS, target: QCVN_56_2013, scope: partial, target_part: "Bảng 4", evidence: "Điều 2, Khoản 3, điểm c" }
+      - { type: REPEALS, target: QCVN_61_MT_2016, scope: partial, target_part: "Bảng 2", evidence: "Điều 2, Khoản 3, điểm d" }
+
+  # ---------------------------------------------------------------- TT 10/2021
+  - document_id: TT_10_2021
+    document_code: "10/2021/TT-BTNMT"
+    document_type: circular
+    title: "Thông tư quy định kỹ thuật quan trắc môi trường và quản lý thông tin, dữ liệu quan trắc chất lượng môi trường"
+    issuer: "Bộ Tài nguyên và Môi trường"
+    domain: both
+    text_status: official
+    source:
+      file: "Thông tư 10-2021-TT-BTNMT.pdf"
+      format: pdf
+      sha256: "510c280c1811a0ba736c2f889aa9c7f3ffa3cfe696416033efe08a4964e90ad0"
+      size_bytes: 4820950
+      page_count: 192
+      note: "PO xác nhận 2026-09-24: bản chính thức, đã đối chiếu với bản gốc → text_status=official (trước đó draft). File vẫn trống số hiệu (trang 1) và ngày hiệu lực (Điều 45.1) nên số/ngày là registry_fact admin_declared. Text-based; lỗi font kế thừa (ƣ) và khoảng trắng chèn trong từ. Số trang in đánh lại từ 1 ở phần Phụ lục (trang PDF 53 = trang in 1)."
+    grammar: grammars/tt_10_2021.yaml
+    ingest_scope: partial
+    scope_file: grammars/tt_10_2021.scope.yaml
+    facts:
+      - { fact_type: document_number, value: "10/2021/TT-BTNMT", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: issue_date, value: "2021-06-30", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: effective_date, value: "2021-08-16", source: admin_declared, declared_by: "claudecode@timo.vn", declared_at: 2026-09-23 }
+      - { fact_type: partial_effective_date, value: "2022-01-01", source: from_text, scope: "Chương III", evidence: "Điều 45, Khoản 2 (trang PDF 51)" }
+      - { fact_type: signer, value: "KT. Bộ trưởng — Thứ trưởng Võ Tuấn Nhân", source: from_text, evidence: "trang PDF 52" }
+    relations:
+      - { type: REPLACES, target: TT_24_2017, evidence: "Điều 45, Khoản 3" }
+      - { type: REPLACES, target: TT_43_2015, scope: partial, target_part: "Chương III", evidence: "Điều 45, Khoản 3" }
+      - { type: SUPPLEMENTS, target: QCVN_40_2025, evidence: "Điều 3.1, Điều 16.1 (phương pháp theo Thông tư và QCVN hiện hành)" }
+      - { type: SUPPLEMENTS, target: QCVN_19_2024, evidence: "Điều 3.1, Điều 17.1" }
+      - { type: REFERENCES, target: ND_08_2022, evidence: "Điều 16.3, Điều 17.5 (tần suất theo pháp luật hiện hành)" }
+      - { type: REFERENCES, target: US_EPA_METHOD_1, evidence: "Phụ lục 5" }
+
+# ------------------------------------------------------------------ Văn bản ngoài corpus (stub)
+external_stubs:
+  - { document_id: TT_47_2011, document_code: "47/2011/TT-BTNMT", document_type: external_stub, title: "Thông tư quy định quy chuẩn kỹ thuật quốc gia về môi trường (2011)" }
+  - { document_id: TT_11_2015, document_code: "11/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_12_2015, document_code: "12/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_13_2015, document_code: "13/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_76_2015, document_code: "76/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_77_2015, document_code: "77/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_31_2017, document_code: "31/2017/TT-BTNMT", document_type: external_stub, title: "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về môi trường" }
+  - { document_id: TT_24_2017, document_code: "24/2017/TT-BTNMT", document_type: external_stub, title: "Thông tư quy định quy trình kỹ thuật quan trắc môi trường" }
+  - { document_id: TT_43_2015, document_code: "43/2015/TT-BTNMT", document_type: external_stub, title: "Thông tư về báo cáo hiện trạng môi trường, bộ chỉ thị môi trường và quản lý số liệu quan trắc môi trường" }
+  - { document_id: QCVN_25_2009, document_code: "QCVN 25:2009/BTNMT", document_type: external_stub, title: "Nước thải của bãi chôn lấp chất thải rắn", domain: wastewater }
+  - { document_id: QCVN_28_2010, document_code: "QCVN 28:2010/BTNMT", document_type: external_stub, title: "Nước thải y tế", domain: wastewater }
+  - { document_id: QCVN_29_2010, document_code: "QCVN 29:2010/BTNMT", document_type: external_stub, title: "Nước thải của kho và cửa hàng xăng dầu", domain: wastewater }
+  - { document_id: QCVN_40_2011, document_code: "QCVN 40:2011/BTNMT", document_type: external_stub, title: "Nước thải công nghiệp (2011)", domain: wastewater }
+  - { document_id: QCVN_01_MT_2015, document_code: "QCVN 01-MT:2015/BTNMT", document_type: external_stub, title: "Nước thải sơ chế cao su thiên nhiên", domain: wastewater }
+  - { document_id: QCVN_11_MT_2015, document_code: "QCVN 11-MT:2015/BTNMT", document_type: external_stub, title: "Nước thải công nghiệp chế biến thủy sản", domain: wastewater }
+  - { document_id: QCVN_12_MT_2015, document_code: "QCVN 12-MT:2015/BTNMT", document_type: external_stub, title: "Nước thải công nghiệp giấy và bột giấy", domain: wastewater }
+  - { document_id: QCVN_13_MT_2015, document_code: "QCVN 13-MT:2015/BTNMT", document_type: external_stub, title: "Nước thải công nghiệp dệt nhuộm", domain: wastewater }
+  - { document_id: QCVN_60_MT_2015, document_code: "QCVN 60-MT:2015/BTNMT", document_type: external_stub, title: "Nước thải sản xuất cồn nhiên liệu", domain: wastewater }
+  - { document_id: QCVN_63_2017, document_code: "QCVN 63:2017/BTNMT", document_type: external_stub, title: "Nước thải chế biến tinh bột sắn", domain: wastewater }
+  - { document_id: QCVN_52_2017, document_code: "QCVN 52:2017/BTNMT", document_type: external_stub, title: "Nước thải công nghiệp sản xuất thép", domain: wastewater }
+  - { document_id: QCVN_19_2009, document_code: "QCVN 19:2009/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp đối với bụi và các chất vô cơ", domain: emission }
+  - { document_id: QCVN_20_2009, document_code: "QCVN 20:2009/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp đối với một số chất hữu cơ", domain: emission }
+  - { document_id: QCVN_21_2009, document_code: "QCVN 21:2009/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp sản xuất phân bón hóa học", domain: emission }
+  - { document_id: QCVN_22_2009, document_code: "QCVN 22:2009/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp nhiệt điện", domain: emission }
+  - { document_id: QCVN_23_2009, document_code: "QCVN 23:2009/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp sản xuất xi măng", domain: emission }
+  - { document_id: QCVN_34_2010, document_code: "QCVN 34:2010/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp lọc hóa dầu đối với bụi và các chất vô cơ", domain: emission }
+  - { document_id: QCVN_51_2017, document_code: "QCVN 51:2017/BTNMT", document_type: external_stub, title: "Khí thải công nghiệp sản xuất thép", domain: emission }
+  - { document_id: QCVN_41_2011, document_code: "QCVN 41:2011/BTNMT", document_type: external_stub, title: "Đồng xử lý chất thải nguy hại trong lò nung xi măng", domain: emission }
+  - { document_id: QCVN_02_2012, document_code: "QCVN 02:2012/BTNMT", document_type: external_stub, title: "Lò đốt chất thải rắn y tế", domain: emission }
+  - { document_id: QCVN_30_2012, document_code: "QCVN 30:2012/BTNMT", document_type: external_stub, title: "Lò đốt chất thải công nghiệp", domain: emission }
+  - { document_id: QCVN_56_2013, document_code: "QCVN 56:2013/BTNMT", document_type: external_stub, title: "Tái chế dầu thải", domain: emission }
+  - { document_id: QCVN_61_MT_2016, document_code: "QCVN 61-MT:2016/BTNMT", document_type: external_stub, title: "Lò đốt chất thải rắn sinh hoạt", domain: emission }
+  - { document_id: QCVN_08_2023, document_code: "QCVN 08:2023/BTNMT", document_type: external_stub, title: "Chất lượng nước mặt (phân vùng Mức A/B — căn cứ Cột A/B/C QCVN 40)", domain: wastewater }
+  - { document_id: QCVN_NUOC_THAI_SINH_HOAT, document_code: "QCVN về nước thải sinh hoạt và nước thải đô thị, khu dân cư tập trung", document_type: external_stub, title: "Chưa xác định số hiệu trong corpus", domain: wastewater }
+  - { document_id: QD_27_2018, document_code: "27/2018/QĐ-TTg", document_type: external_stub, title: "Hệ thống ngành kinh tế Việt Nam (mã ngành VSIC)" }
+  - { document_id: ND_107_2016, document_code: "107/2016/NĐ-CP", document_type: external_stub, title: "Điều kiện kinh doanh dịch vụ đánh giá sự phù hợp" }
+  - { document_id: ND_08_2022, document_code: "08/2022/NĐ-CP", document_type: external_stub, title: "Quy định chi tiết Luật Bảo vệ môi trường — nguồn quy định tần suất quan trắc (PO quyết định không nạp, D10)" }
+  - { document_id: ND_05_2025, document_code: "05/2025/NĐ-CP", document_type: external_stub, title: "Sửa đổi, bổ sung NĐ 08/2022/NĐ-CP (không nạp, D10)" }
+  - { document_id: US_EPA_METHOD_1, document_code: "US EPA Method 1 / 1A", document_type: external_stub, title: "Sample and velocity traverses for stationary sources" }

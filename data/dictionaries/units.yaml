@@ -1,0 +1,23 @@
+# Đơn vị đo xuất hiện trong QCVN 40:2025, QCVN 19:2024 và TT 10/2021 (phần in-scope).
+# `latex` là dạng gốc trong file Markdown (để khớp khi parse); `symbol` là dạng hiển thị.
+units:
+  - { unit_id: mg_L, symbol: "mg/L", name: "miligam trên lít", latex: "$mg/L$", kind: concentration, aliases: ["mg/l", "mg per l", "miligam/lít"], sources: ["QCVN 40:2025/BTNMT, Bảng 1"] }
+  - { unit_id: mg_Nm3, symbol: "mg/Nm³", name: "miligam trên mét khối khí thải chuẩn", latex: "$\\text{mg/Nm}^3$", kind: concentration, aliases: ["mg/nm3", "mg/nm³", "mg per nm3"], sources: ["QCVN 19:2024/BTNMT, Bảng 1", "QCVN 19:2024/BTNMT, Mục 1.3.10"] }
+  - { unit_id: ng_TEQ_Nm3, symbol: "ngTEQ/Nm³", name: "nanogam độ độc tương đương trên mét khối khí thải chuẩn", latex: "ngTEQ/Nm3", kind: toxicity, aliases: ["ngteq/nm3", "ng teq/nm3"], sources: ["QCVN 19:2024/BTNMT, Mục 2.1, Bảng 1, TT 10 (Dioxin/Furan)"] }  # D70 2026-10-20: nguồn sửa pg → ng theo bản chính thức
+  - { unit_id: pg_TEQ_L, symbol: "pgTEQ/L", name: "picogam độ độc tương đương trên lít", latex: "pgTEQ/L", kind: toxicity, aliases: ["pgteq/l"], sources: ["QCVN 40:2025/BTNMT, Bảng 2, TT 35"] }
+  - { unit_id: degC, symbol: "°C", name: "độ C", latex: "$^\\circ\\text{C}$", kind: temperature, aliases: ["độ c", "oc", "°c"], sources: ["QCVN 40:2025/BTNMT, Bảng 2, TT 2"] }
+  - { unit_id: ph_unit, symbol: "-", name: "không thứ nguyên (pH)", latex: "-", kind: ph, aliases: [], sources: ["QCVN 40:2025/BTNMT, Bảng 2, TT 1"] }
+  - { unit_id: MPN_or_CFU_100mL, symbol: "MPN hoặc CFU/100 mL", name: "MPN hoặc CFU trên 100 mL", latex: "MPN hoặc CFU/100 mL", kind: count, aliases: ["mpn/100ml", "cfu/100ml", "mpn/100 ml", "cfu/100 ml"], sources: ["QCVN 40:2025/BTNMT, Bảng 2, TT 5"] }
+  - { unit_id: Pt_Co, symbol: "Pt/Co", name: "đơn vị màu Pt/Co", latex: "Pt/Co", kind: color, aliases: ["pt-co", "pt/co", "đơn vị pt-co"], sources: ["QCVN 40:2025/BTNMT, Bảng 2, TT 6"] }
+  - { unit_id: ringelmann, symbol: "Ringelmann", name: "Giá trị Ringelmann (độ khói)", latex: "Giá trị Ringelmann", kind: opacity, aliases: ["ringelmann", "độ khói ringelmann"], sources: ["QCVN 19:2024/BTNMT, Bảng 2, TT 12"] }
+  - { unit_id: percent_O2, symbol: "% O₂", name: "phần trăm ôxy tham chiếu", kind: dimensionless, aliases: ["% o2", "ôxy tham chiếu", "oxy tham chiếu", "o2 tham chiếu"], sources: ["QCVN 19:2024/BTNMT, Mục 1.3.11", "QCVN 19:2024/BTNMT, Bảng 1, Chú thích"] }
+  - { unit_id: m3_per_day, symbol: "m³/ngày", name: "mét khối trên ngày (lưu lượng xả thải F)", latex: "$m^3/\\text{ngày}$", kind: flow, aliases: ["m3/ngày", "m3/ngay", "m³/ngày đêm", "m3/ngày đêm", "khối/ngày"], sources: ["QCVN 40:2025/BTNMT, Bảng 1 (F)"] }
+  - { unit_id: t_steam_per_h, symbol: "tấn hơi/giờ", name: "tấn hơi trên giờ (công suất hơi)", kind: mass_rate, aliases: ["tấn hơi/giờ", "tấn/giờ hơi", "t/h hơi", "tph"], sources: ["QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.1.1"] }
+  - { unit_id: t_per_h, symbol: "tấn/giờ", name: "tấn trên giờ (công suất đốt chất thải)", kind: mass_rate, aliases: ["tấn/giờ", "t/h", "tấn/h"], sources: ["QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 2.1"] }
+  - { unit_id: kcal_per_h, symbol: "Kcal/giờ", name: "kilocalo trên giờ (nhiệt lượng)", kind: heat, aliases: ["kcal/giờ", "kcal/h", "kcal/gio"], sources: ["QCVN 19:2024/BTNMT, Bảng 1, TT 2, Thiết bị 1.1.1"] }
+  - { unit_id: MW, symbol: "MW", name: "megawatt (công suất phát điện)", kind: power, aliases: ["mw", "megawatt"], sources: ["QCVN 19:2024/BTNMT, Bảng 2, TT 1, Thiết bị 2"] }
+  - { unit_id: Nm3, symbol: "Nm³", name: "mét khối khí thải chuẩn (25 °C, 760 mmHg)", latex: "$Nm^3$", kind: dimensionless, aliases: ["nm3", "mét khối chuẩn"], sources: ["QCVN 19:2024/BTNMT, Mục 1.3.10"] }
+  - { unit_id: m3, symbol: "m³", name: "mét khối (tổng thể tích nước thải V)", kind: flow, aliases: ["m3", "mét khối"], sources: ["Thông tư 10/2021/TT-BTNMT (dự thảo), Phụ lục 4.1, Bảng 26, TT 5"] }
+  - { unit_id: percent, symbol: "%", name: "phần trăm", kind: dimensionless, aliases: ["%", "phần trăm"], sources: ["Thông tư 10/2021/TT-BTNMT (dự thảo), Điều 17, Khoản 4 (50 % công suất)"] }
+  - { unit_id: m, symbol: "m", name: "mét (đường kính ống khói D, khoảng cách A/B)", kind: dimensionless, aliases: ["m", "mét"], sources: ["Thông tư 10/2021/TT-BTNMT (dự thảo), Phụ lục 5"] }
+  - { unit_id: minute, symbol: "phút", name: "phút (thời gian đo tối thiểu)", kind: dimensionless, aliases: ["phút"], sources: ["Thông tư 10/2021/TT-BTNMT (dự thảo), Phụ lục 6"] }

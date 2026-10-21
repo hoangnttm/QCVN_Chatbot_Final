@@ -1,0 +1,293 @@
+# Applicability rule set v1 — PLAN.md §7. Hoàn toàn xác định: không có LLM trong quyết định.
+# Mỗi rule: `action` = handler trong backend/app/applicability/engine.py; `when` = điều kiện kích hoạt trên
+# ngữ cảnh người dùng cung cấp; `requires` = trường bắt buộc (thiếu → MissingInformation, rule bị bỏ qua);
+# `evidence` = nhãn trích dẫn / registry fact / chú thích bảng được resolve thành chunk id khi nạp (thiếu → lỗi).
+# Kết quả luôn là "đánh giá sơ bộ", không phải kết luận pháp lý (không bao giờ xuất đạt / không đạt).
+version: 1
+updated: 2026-09-23
+disclaimer: >-
+  Đánh giá sơ bộ dựa trên thông tin do người dùng cung cấp và văn bản trong hệ thống; không phải kết luận pháp lý,
+  không thay thế quyết định của cơ quan có thẩm quyền. Mọi ngưỡng đều kèm trích dẫn để đối chiếu.
+
+schemas:
+  wastewater:
+    label: "Nước thải công nghiệp (QCVN 40:2025/BTNMT)"
+    fields:
+      - { name: wastewater_kind, type: enum, label: "Loại nước thải", required_for: [W-02],
+          options: [{ value: industrial, label: "Nước thải công nghiệp (sản xuất, kinh doanh, dịch vụ)" },
+                    { value: offshore_oil_gas, label: "Nước khai thác thải từ công trình dầu khí trên biển" },
+                    { value: livestock, label: "Nước thải chăn nuôi (xử lý riêng)" },
+                    { value: domestic_urban, label: "Nước thải sinh hoạt / đô thị, khu dân cư tập trung" }] }
+      - { name: discharges_to_receiving_water, type: bool, label: "Có xả nước thải ra nguồn nước tiếp nhận (sông, hồ, biển…)?", required_for: [W-01] }
+      - { name: connected_to_centralized_system, type: bool, label: "Đấu nối vào hệ thống thu gom, xử lý tập trung (đô thị / khu, cụm công nghiệp)?", required_for: [W-03] }
+      - { name: mixed_domestic, type: bool, label: "Nước thải sinh hoạt / chăn nuôi nhập chung với nước thải công nghiệp?", required_for: [W-04] }
+      - { name: sector_id, type: enum, options_from: sectors, label: "Loại hình sản xuất, kinh doanh, dịch vụ (Phụ lục 2)", required_for: [W-08, W-09] }
+      - { name: receiving_body_type, type: enum, options_from: receiving_bodies, label: "Loại nguồn nước tiếp nhận", required_for: [W-08] }
+      - { name: zone, type: enum, options_from: zones, label: "Phân vùng xả thải (Cột A/B/C)", required_for: [W-06],
+          help: "Theo chức năng nguồn nước tiếp nhận (QCVN 08:2023 / quy định UBND tỉnh); chưa rõ → chọn 'Không rõ'" }
+      - { name: flow_m3_day, type: number, label: "Lưu lượng xả thải (m³/ngày)", required_for: [W-07] }
+      - { name: is_cooling_water, type: bool, label: "Là nước làm mát?", required_for: [W-10] }
+      - { name: is_aquaculture, type: bool, label: "Là nước thải nuôi trồng thủy sản?", required_for: [W-10] }
+      - { name: uses_chlorine, type: bool, label: "Có sử dụng Clo hoặc hóa chất khử trùng gốc Clo?", required_for: [W-11] }
+      - { name: project_status, type: enum, label: "Tình trạng dự án / cơ sở", required_for: [W-12],
+          options: [{ value: operating, label: "Cơ sở đã đi vào vận hành" },
+                    { value: approved_before, label: "Dự án đã có quyết định phê duyệt ĐTM / giấy phép" },
+                    { value: submitted_before, label: "Dự án đã nộp hồ sơ đề nghị thẩm định / cấp phép" },
+                    { value: new, label: "Dự án mới (nộp hồ sơ sau ngày Thông tư có hiệu lực)" }] }
+      - { name: dossier_date, type: date, label: "Ngày vận hành / phê duyệt / nộp hồ sơ", required_for: [W-12] }
+      - { name: as_of_date, type: date, label: "Thời điểm đánh giá (mặc định hôm nay)", required_for: [] }
+  emission:
+    label: "Khí thải công nghiệp (QCVN 19:2024/BTNMT)"
+    fields:
+      - { name: has_stack_emission, type: bool, label: "Có thiết bị xả khí thải công nghiệp (ống khói, ống thải)?", required_for: [E-01] }
+      - { name: is_vehicle, type: bool, label: "Nguồn thải là phương tiện giao thông vận tải?", required_for: [E-02] }
+      - { name: zone, type: enum, options_from: zones, label: "Phân vùng môi trường (Cột A/B/C)", required_for: [E-03],
+          help: "A: vùng bảo vệ nghiêm ngặt; B: vùng hạn chế phát thải; C: còn lại; chưa rõ → 'Không rõ'" }
+      - { name: equipment_type_id, type: enum, options_from: equipment, label: "Loại thiết bị xả khí thải (theo Bảng 1/2)", required_for: [E-04] }
+      - { name: fuel_type, type: enum, options_from: fuels, label: "Nhiên liệu sử dụng", required_for: [] }
+      - { name: capacity_value, type: number, label: "Công suất thiết bị (giá trị)", required_for: [] }
+      - { name: capacity_unit, type: enum, label: "Đơn vị công suất", required_for: [],
+          options: [{ value: t_steam_per_h, label: "tấn hơi/giờ" }, { value: kcal_per_h, label: "Kcal/giờ" },
+                    { value: MW, label: "MW" }, { value: t_per_h, label: "tấn/giờ" }] }
+      - { name: co_processes_waste, type: bool, label: "Có đồng xử lý chất thải?", required_for: [] }
+      - { name: parameters, type: list, options_from: parameters_emission, label: "Thông số quan tâm (tùy chọn)", required_for: [] }
+      - { name: project_status, type: enum, label: "Tình trạng dự án / cơ sở", required_for: [E-09],
+          options: [{ value: operating, label: "Cơ sở đã đi vào vận hành" },
+                    { value: approved_before, label: "Dự án đã có quyết định phê duyệt ĐTM / giấy phép" },
+                    { value: submitted_before, label: "Dự án đã nộp hồ sơ đề nghị thẩm định / cấp phép" },
+                    { value: new, label: "Dự án mới (nộp hồ sơ sau ngày Thông tư có hiệu lực)" }] }
+      - { name: dossier_date, type: date, label: "Ngày vận hành / phê duyệt / nộp hồ sơ", required_for: [E-09] }
+      - { name: as_of_date, type: date, label: "Thời điểm đánh giá (mặc định hôm nay)", required_for: [] }
+
+rules:
+  # ------------------------------------------------------------------ nước thải
+  - id: W-02
+    domain: wastewater
+    title: "Loại nước thải ngoài phạm vi QCVN 40"
+    action: exclude
+    when: [{ field: wastewater_kind, op: in, value: [offshore_oil_gas, livestock, domestic_urban] }]
+    requires: [wastewater_kind]
+    params:
+      document_id: QCVN_40_2025
+      pointers: { offshore_oil_gas: "QCVN về nước khai thác thải từ công trình dầu khí trên biển (ngoài corpus)",
+                  livestock: "QCVN về nước thải chăn nuôi (ngoài corpus)",
+                  domestic_urban: "QCVN về nước thải sinh hoạt và nước thải đô thị, khu dân cư tập trung (ngoài corpus)" }
+    message: "QCVN 40:2025 không áp dụng cho loại nước thải này; xem QCVN chuyên ngành tương ứng (ngoài hệ thống)."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 1.1.2", "QCVN 40:2025/BTNMT, Mục 4.9"]
+  - id: W-01
+    domain: wastewater
+    title: "Xả nước thải công nghiệp ra nguồn tiếp nhận → ứng viên QCVN 40:2025"
+    action: candidate
+    when: [{ field: discharges_to_receiving_water, op: eq, value: true }]
+    requires: [discharges_to_receiving_water]
+    params: { document_id: QCVN_40_2025 }
+    message: "Có xả nước thải công nghiệp ra nguồn nước tiếp nhận → QCVN 40:2025/BTNMT là quy chuẩn ứng viên."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 1.1.1", "QCVN 40:2025/BTNMT, Mục 1.2", "QCVN 40:2025/BTNMT, Mục 1.3.2"]
+  - id: W-03
+    domain: wastewater
+    title: "Đấu nối hệ thống tập trung → áp dụng yêu cầu chủ hạ tầng"
+    action: indirect
+    when: [{ field: connected_to_centralized_system, op: eq, value: true }]
+    requires: [connected_to_centralized_system]
+    params: { document_id: QCVN_40_2025 }
+    message: "Nước thải đấu nối vào hệ thống thu gom, xử lý tập trung phải đáp ứng yêu cầu của chủ đầu tư hạ tầng / chính quyền địa phương; QCVN 40:2025 không áp dụng trực tiếp tại điểm đấu nối."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.10", "QCVN 40:2025/BTNMT, Mục 4.11"]
+  - id: W-04
+    domain: wastewater
+    title: "Nước sinh hoạt / chăn nuôi nhập chung → quản lý như nước thải công nghiệp"
+    action: note
+    when: [{ field: mixed_domestic, op: eq, value: true }]
+    requires: [mixed_domestic]
+    message: "Nước thải sinh hoạt, chăn nuôi nhập cùng nước thải công nghiệp được quản lý như nước thải công nghiệp theo QCVN 40:2025."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.8"]
+  - id: W-06
+    domain: wastewater
+    title: "Cột A/B/C theo chức năng nguồn tiếp nhận — người dùng cung cấp"
+    action: zone_source
+    requires: []
+    params: { external: "QCVN 08:2023/BTNMT (ngoài corpus) hoặc quy định của UBND cấp tỉnh" }
+    message: "Phân vùng xả thải (Cột A/B/C) xác định theo chức năng nguồn nước tiếp nhận (Mức A/B QCVN 08:2023 hoặc quy định UBND tỉnh) — hệ thống không tự suy ra."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 1.3.3", "QCVN 40:2025/BTNMT, Mục 1.3.3.1", "QCVN 40:2025/BTNMT, Mục 1.3.3.2", "QCVN 40:2025/BTNMT, Mục 1.3.3.3"]
+  - id: W-05
+    domain: wastewater
+    title: "Chưa xác định phân vùng → áp dụng Cột B (kèm cảnh báo)"
+    action: default_zone
+    when: [{ field: zone, op: in, value: [unknown, null] }]
+    requires: []
+    params: { zone: B, circular_id: TT_06_2025 }
+    message: "Chưa xác định được phân vùng xả thải → áp dụng Cột B của Bảng 1 và Bảng 2 (TT 06/2025 Điều 2.4)."
+    evidence: ["Thông tư 06/2025/TT-BTNMT, Điều 2, Khoản 4"]
+  - id: W-10
+    domain: wastewater
+    title: "Trường hợp đặc thù: nước làm mát / nuôi trồng thủy sản"
+    action: special_cases
+    requires: [is_cooling_water, is_aquaculture]
+    params:
+      cooling_parameters: [Temperature]
+      cooling_chlorine_parameters: [Residual_chlorine, Chloroform]
+      aquaculture_table1_parameters: [BOD5, COD, TOC, TSS]
+      aquaculture_table2_parameters: [pH, Coliform, T_N, T_P]
+    message: "Nước làm mát chỉ quan trắc nhiệt độ (+ Clo, Chloroform nếu dùng Clo); nước thải thủy sản kiểm soát bộ thông số riêng và Bảng 1 theo mức F ≤ 2000 không phân biệt lưu lượng."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.3.1", "QCVN 40:2025/BTNMT, Mục 4.3.2", "QCVN 40:2025/BTNMT, Mục 4.3.3"]
+  - id: W-07
+    domain: wastewater
+    title: "Lưu lượng → nhóm cột Bảng 1 (F ≤ 2000 / F > 2000)"
+    action: flow_regime
+    requires: [flow_m3_day]
+    params: { threshold: 2000, table_code: QCVN40_2025.B1 }
+    message: "Bảng 1 (BOD5, COD/TOC, TSS) có hai nhóm cột theo lưu lượng xả thải F ≤ 2000 và F > 2000 m³/ngày."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.1.1"]
+  - id: W-09
+    domain: wastewater
+    title: "Loại hình → thông số đặc trưng (Phụ lục 2 cột 4) và thông số điều kiện (cột 5)"
+    action: sector_parameters
+    requires: [sector_id]
+    params: { table_code: QCVN40_2025.PL2, base_parameters: [pH, Coliform] }
+    message: "Thông số ô nhiễm phải kiểm soát gồm pH, tổng coliform, Bảng 1 và các thông số đặc trưng theo loại hình tại cột 4 Phụ lục 2; thông số cột 5 tùy nguyên liệu, hóa chất thực tế."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.1.1", "QCVN 40:2025/BTNMT, Mục 4.1.2", "QCVN 40:2025/BTNMT, Mục 4.1.4"]
+  - id: W-11
+    domain: wastewater
+    title: "Dùng Clo → thêm Clo, Chloroform"
+    action: add_parameters
+    when: [{ field: uses_chlorine, op: eq, value: true }]
+    requires: [uses_chlorine]
+    params: { parameters: [Residual_chlorine, Chloroform] }
+    message: "Cơ sở có sử dụng Clo hoặc hóa chất khử trùng gốc Clo phải kiểm soát thêm Clo, Chloroform."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.1.3"]
+  - id: W-08
+    domain: wastewater
+    title: "Nguồn tiếp nhận + loại hình → dòng T-P 4.1/4.2/4.3; mặn–lợ → không áp dụng Clorua"
+    action: receiving_body
+    requires: [receiving_body_type]
+    params:
+      tp_parameter: T_P
+      tp_rows: { lake: QCVN40_2025.B2.r4.1, special: QCVN40_2025.B2.r4.2, other: QCVN40_2025.B2.r4.3 }
+      special_sector_keywords: ["nuôi trồng thủy sản", "chế biến thủy sản", "tinh bột sắn", "cao su"]
+      chloride_parameter: Cl
+      chloride_excluded_when: [saline_brackish]
+    message: "Giới hạn Tổng Phốt pho phụ thuộc loại nguồn tiếp nhận (hồ / sông–biển) và loại hình (thủy sản, tinh bột sắn, cao su); Clorua không áp dụng khi xả vào nguồn nước mặn, nước lợ."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.1", "QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.2", "QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 4.3", "QCVN 40:2025/BTNMT, Mục 2.2, Bảng 2, TT 30"]
+  - id: W-12
+    domain: wastewater
+    title: "Chuyển tiếp và lộ trình áp dụng QCVN 40:2025"
+    action: transition
+    requires: [project_status]
+    params: { circular_id: TT_06_2025, document_id: QCVN_40_2025, deadline: "2032-01-01", local_roadmap_exception: false }
+    message: "Dự án mới áp dụng QCVN 40:2025 từ 01/9/2025; cơ sở/dự án đã vận hành hoặc đã có hồ sơ trước đó tiếp tục áp dụng quy chuẩn cũ đến hết 31/12/2031, từ 01/01/2032 phải đáp ứng QCVN 40:2025 (khuyến khích áp dụng sớm)."
+    evidence: ["Thông tư 06/2025/TT-BTNMT, Điều 2, Khoản 1", "Thông tư 06/2025/TT-BTNMT, Điều 3, Khoản 1", "Thông tư 06/2025/TT-BTNMT, Điều 4, Khoản 1", "Thông tư 06/2025/TT-BTNMT, Điều 4, Khoản 2", "Thông tư 06/2025/TT-BTNMT, Điều 4, Khoản 3"]
+  - id: W-13
+    domain: wastewater
+    title: "Thông số đặc trưng mới chưa có trong Bảng 1/2 → tiêu chuẩn G7 (cảnh báo)"
+    action: note
+    requires: []
+    message: "Thông số ô nhiễm đặc trưng mới chưa quy định tại Bảng 1, Bảng 2 thì áp dụng giá trị giới hạn theo tiêu chuẩn của nhóm G7 (Mục 4.2) — hệ thống không có dữ liệu này, chỉ cảnh báo."
+    evidence: ["QCVN 40:2025/BTNMT, Mục 4.1.5", "QCVN 40:2025/BTNMT, Mục 4.2"]
+
+  # ------------------------------------------------------------------ khí thải
+  - id: E-02
+    domain: emission
+    title: "Phương tiện giao thông → ngoài phạm vi QCVN 19"
+    action: exclude
+    when: [{ field: is_vehicle, op: eq, value: true }]
+    requires: [is_vehicle]
+    params: { document_id: QCVN_19_2024, pointers: { vehicle: "Quy chuẩn khí thải phương tiện giao thông (ngoài corpus)" } }
+    message: "QCVN 19:2024 không áp dụng đối với hoạt động xả khí thải của phương tiện giao thông vận tải."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 1.1.2"]
+  - id: E-01
+    domain: emission
+    title: "Thiết bị xả khí thải công nghiệp → ứng viên QCVN 19:2024"
+    action: candidate
+    when: [{ field: has_stack_emission, op: eq, value: true }]
+    requires: [has_stack_emission]
+    params: { document_id: QCVN_19_2024 }
+    message: "Có thiết bị xả khí thải công nghiệp → QCVN 19:2024/BTNMT là quy chuẩn ứng viên."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 1.1.1", "QCVN 19:2024/BTNMT, Mục 1.2", "QCVN 19:2024/BTNMT, Mục 1.3.5"]
+  - id: E-03
+    domain: emission
+    title: "Cột A/B/C theo phân vùng môi trường — người dùng cung cấp"
+    action: zone_source
+    requires: []
+    params: { external: "Quy hoạch phân vùng môi trường của tỉnh (ngoài corpus)" }
+    message: "Cột A/B/C xác định theo địa điểm hoạt động thuộc vùng bảo vệ nghiêm ngặt / vùng hạn chế phát thải / còn lại — hệ thống không tự suy ra."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 1.3.13", "QCVN 19:2024/BTNMT, Mục 1.3.13.1", "QCVN 19:2024/BTNMT, Mục 1.3.13.2", "QCVN 19:2024/BTNMT, Mục 1.3.13.3"]
+  - id: E-08
+    domain: emission
+    title: "Chưa xác định phân vùng → áp dụng Cột B (kèm cảnh báo, bản dự thảo)"
+    action: default_zone
+    when: [{ field: zone, op: in, value: [unknown, null] }]
+    requires: []
+    params: { zone: B, circular_id: TT_45_2024 }
+    message: "Chưa xác định được phân vùng môi trường → áp dụng Cột B của Bảng 1 và Bảng 2 QCVN 19:2024 (TT 45/2024 Điều 2.4, bản dự thảo)."
+    evidence: ["Thông tư 45/2024/TT-BTNMT, Điều 2, Khoản 4, tr. 2"]
+  - id: E-04
+    domain: emission
+    title: "Thiết bị + nhiên liệu + công suất → dòng Bảng 1/2 khớp; không khớp → 'thiết bị xả thải khác'"
+    action: equipment_match
+    requires: [equipment_type_id]
+    params:
+      tables: [QCVN19_2024.B1, QCVN19_2024.B2]
+      fallback_equipment_ids: [cac_thiet_bi_xa_thai_khac, cac_thiet_bi_xa_thai_khac_tru_dot_chat_thai_va_dong_xu_ly_chat_thai_duoc_tinh_th, thiet_bi_xa_thai_khac]
+    message: "Giá trị giới hạn được chọn theo loại thiết bị (cột 4 Bảng 1/2), nhiên liệu và công suất; thiết bị không thuộc loại nào được liệt kê áp dụng dòng 'Các thiết bị xả thải khác'."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 4.2.1", "QCVN 19:2024/BTNMT, Mục 4.2.2", "QCVN 19:2024/BTNMT, Mục 1.3.12"]
+  - id: E-05
+    domain: emission
+    title: "Kèm hàm lượng ôxy tham chiếu của dòng đã chọn"
+    action: note
+    requires: []
+    message: "Giá trị trong ngoặc tại Bảng 1/2 là hàm lượng ôxy tham chiếu (%); kết quả quan trắc phải quy đổi về hàm lượng ôxy tham chiếu này trước khi so sánh."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 1.3.11", { table_footnotes: QCVN19_2024.B1 }]
+  - id: E-06
+    domain: emission
+    title: "Thông số mới chưa có trong Bảng 1/2 → tiêu chuẩn G7 (cảnh báo)"
+    action: unknown_parameters
+    requires: []
+    message: "Thông số ô nhiễm đặc trưng mới chưa quy định tại Bảng 1, Bảng 2 thì áp dụng giá trị giới hạn theo tiêu chuẩn của nhóm G7 (Mục 4.3) — hệ thống chỉ cảnh báo, không kết luận."
+    evidence: ["QCVN 19:2024/BTNMT, Mục 4.2.3", "QCVN 19:2024/BTNMT, Mục 4.3"]
+  - id: E-07
+    domain: emission
+    title: "Hiệu lực QCVN 19:2024 — theo registry fact TT 45/2024 (do quản trị viên khai báo)"
+    action: effective_fact
+    requires: []
+    params: { circular_id: TT_45_2024, fact_type: effective_date }
+    message: "QCVN 19:2024 có hiệu lực theo ngày hiệu lực của TT 45/2024 do quản trị viên khai báo; văn bản trong hệ thống là bản dự thảo."
+    evidence: [{ registry_fact: { document_id: TT_45_2024, fact_type: effective_date } }]
+  - id: E-09
+    domain: emission
+    title: "Chuyển tiếp và lộ trình áp dụng QCVN 19:2024 (ngoại lệ lộ trình của UBND tỉnh)"
+    action: transition
+    requires: [project_status]
+    params: { circular_id: TT_45_2024, document_id: QCVN_19_2024, deadline: "2032-01-01", local_roadmap_exception: true }
+    message: "Dự án mới áp dụng QCVN 19:2024 từ ngày TT 45/2024 có hiệu lực; cơ sở/dự án đã vận hành hoặc đã có hồ sơ trước đó tiếp tục áp dụng quy chuẩn cũ đến hết 31/12/2031, từ 01/01/2032 phải đáp ứng QCVN 19:2024 trừ trường hợp UBND tỉnh ban hành lộ trình sớm hơn."
+    evidence: ["Thông tư 45/2024/TT-BTNMT, Điều 3, Khoản 1, tr. 2", "Thông tư 45/2024/TT-BTNMT, Điều 4, Khoản 1, tr. 3", "Thông tư 45/2024/TT-BTNMT, Điều 4, Khoản 2, tr. 3", "Thông tư 45/2024/TT-BTNMT, Điều 4, Khoản 3, tr. 3", { registry_fact: { document_id: TT_45_2024, fact_type: effective_date } }]
+  - id: M-03
+    domain: emission
+    title: "Điều kiện lấy mẫu khí thải (TT 10/2021)"
+    action: monitoring_note
+    requires: []
+    params: { requirement_ids: [TT10.MR.11, TT10.MR.13, TT10.MR.18, TT10.MR.19, TT10.MR.20] }
+    message: "Lấy mẫu khi cơ sở hoạt động ổn định và ≥ 50 % công suất thiết kế; cửa lấy mẫu và vị trí theo Phụ lục 5 (B ≥ 2D, A ≥ 0,5D; ống khói < 0,3 m dùng US EPA Method 1A)."
+    evidence: [{ monitoring: TT10.MR.11 }, { monitoring: TT10.MR.13 }, { monitoring: TT10.MR.18 }, { monitoring: TT10.MR.19 }]
+  - id: M-04
+    domain: emission
+    title: "Đo trực tiếp SO₂/NOₓ/CO/O₂ chỉ khi đáp ứng Phụ lục 6"
+    action: monitoring_note
+    requires: []
+    params: { requirement_ids: [TT10.MR.10, TT10.MR.25, TT10.MR.27, TT10.MR.28] }
+    message: "Đo trực tiếp SO₂, NOₓ, CO, O₂ tại hiện trường chỉ được dùng khi đáp ứng Phụ lục 6 (kiểm tra khí chuẩn trước mỗi ngày đo, ≥ 3 phép đo × 15 phút/mẫu)."
+    evidence: [{ monitoring: TT10.MR.10 }, { monitoring: TT10.MR.25 }, { monitoring: TT10.MR.28 }]
+
+  # ------------------------------------------------------------------ chính sách trả lời (Phase 4 dùng, không chạy trong assessment)
+  - id: M-01
+    domain: both
+    title: "Tần suất quan trắc → luôn abstain có chỉ dẫn (D10)"
+    action: qa_policy
+    requires: []
+    message: "Các văn bản trong hệ thống không quy định tần suất quan trắc nước thải/khí thải; TT 10/2021 Điều 16.3 / 17.5 dẫn chiếu pháp luật hiện hành (NĐ 08/2022/NĐ-CP, NĐ 05/2025/NĐ-CP — ngoài phạm vi hệ thống). Không dùng tần suất môi trường nền (Chương II)."
+    evidence: ["Thông tư 10/2021/TT-BTNMT, Chương IV, Điều 16, Khoản 3, tr. 12", "Thông tư 10/2021/TT-BTNMT, Chương IV, Điều 17, Khoản 5, tr. 12"]
+  - id: M-02
+    domain: both
+    title: "Câu hỏi phương pháp → Phụ lục 1 QCVN (trọng tài xếp đầu), bổ sung PL 4.1/4.2 TT10, nêu Đ3.1"
+    action: qa_policy
+    requires: []
+    message: "Phương pháp: ưu tiên Phụ lục 1 của QCVN tương ứng (phương pháp trọng tài xếp đầu, Mục 3.1); bổ sung Phụ lục 4.1/4.2 TT 10/2021; nguyên tắc áp dụng theo TT10 Điều 3."
+    evidence: ["Thông tư 10/2021/TT-BTNMT, Chương I, Điều 3, Khoản 1, tr. 2", "Thông tư 10/2021/TT-BTNMT, Chương IV, Điều 16, Khoản 1, tr. 11", "Thông tư 10/2021/TT-BTNMT, Chương IV, Điều 17, Khoản 1, tr. 12"]
